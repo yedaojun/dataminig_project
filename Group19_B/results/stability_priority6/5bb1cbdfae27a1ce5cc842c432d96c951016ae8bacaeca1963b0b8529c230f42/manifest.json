@@ -1,0 +1,21 @@
+{
+  "candidate_run": "4db6488900fe61a295e73994d50ce72eaa8b968f99767fb731ec3f4637babc4b",
+  "validation_rows": 1500,
+  "positives": 51,
+  "thresholds": {
+    "h": 0.8564285714285714,
+    "lof": 1.2540442589617558,
+    "fusion": 0.9877142857142858
+  },
+  "seed": 42,
+  "paired_stratified_repeats": 5000,
+  "delete_blocks": "zero-based original row index // 1000, blocks 0 through 9",
+  "budget": 41,
+  "budget_ties": "expected hits for uniform ties; lower and upper counts also recorded",
+  "source_sha256": "168eb6b82c067cdd0494372e21ad42a458fb9a1c272d0deb014ffa8202cfc0f7",
+  "artifact_sha256": {
+    "bootstrap.csv": "08cf8b48bc5753da8a12a7caa25800ef6fabf7daeedc84167e0beb5569d81f07",
+    "deletions.csv": "382453025b2493fd43e7212367e232c9cc512ae0936bbf8ba7488ac872e4385e",
+    "summary.csv": "b1189565e44efe679cbcb27e160603d4085f751f9245ab13b808c374b6b236b3"
+  }
+}

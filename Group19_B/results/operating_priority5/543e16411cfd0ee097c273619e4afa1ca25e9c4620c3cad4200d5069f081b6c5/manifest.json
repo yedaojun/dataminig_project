@@ -1,0 +1,34 @@
+{
+  "paired_baseline": "38bfe87136caff9241c459e5061c6ec4e53236b7174f6f4598483a7909b30d71",
+  "retained_fusion": "4db6488900fe61a295e73994d50ce72eaa8b968f99767fb731ec3f4637babc4b",
+  "params": {
+    "algorithm": "auto",
+    "contamination": "auto",
+    "leaf_size": 30,
+    "metric": "euclidean",
+    "metric_params": null,
+    "n_jobs": null,
+    "n_neighbors": 160,
+    "novelty": true,
+    "p": 2
+  },
+  "feature": "signed torque minus training median within rpm band",
+  "bin_width_rpm": 100,
+  "minimum_pool": 30,
+  "high_speed_rpm": 1743.0,
+  "central_quantiles": [
+    0.1,
+    0.9
+  ],
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "source_sha256": "2ec454fd5dabc637a5c972ea4588a84cf3c08633734eb3931245d59d1f7d6bee",
+  "artifact_sha256": {
+    "budgets.csv": "0cc53d1fbc31fd7c2ee86ad1238a0fbad3f32fa4d2add2f6d35e1f05ba7c11b7",
+    "changes.csv": "45fd120eecae03e57ba6fce6fe2aae572261a43ebcc9d338db477b73b5e30254",
+    "conditions.csv": "cc6f5fbcf367f9c5511528e01d9b9cd8da5e2acd13312954e05377c8c21a9f0f",
+    "metrics.csv": "ce9cb6eda9946a105cbfd616d23de70632d488fdac379671a631d33268a2465d",
+    "predictions.csv": "0da9eabf278342e1bb49a7aa887adcce7a0c754bb4f479e4a24ba9db6f641a0d",
+    "train_bins.csv": "b147c09d52ab453cf8810419038dfc3db2ab8bd41cf92bce5648c97601b492f4"
+  }
+}

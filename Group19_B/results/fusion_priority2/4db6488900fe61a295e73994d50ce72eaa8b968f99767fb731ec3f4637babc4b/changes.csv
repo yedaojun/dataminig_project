@@ -1,0 +1,5 @@
+comparator,operating_point,base_alarms,fusion_alarms,tp_added,tp_lost,tp_kept,fp_added,fp_lost,fp_kept,hdf_added,hdf_lost,hdf_kept,pwf_added,pwf_lost,pwf_kept
+h,f1,40,41,7,5,21,6,7,7,0,4,20,5,0,1
+h,top41_including_ties,41,41,7,5,21,6,8,7,0,4,20,5,0,1
+lof,f1,41,41,19,4,9,7,22,6,19,0,1,0,3,6
+lof,top41_including_ties,41,41,19,4,9,7,22,6,19,0,1,0,3,6

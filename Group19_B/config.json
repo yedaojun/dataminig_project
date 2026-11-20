@@ -1,0 +1,97 @@
+{
+  "protocol_version": 1,
+  "baseline": {
+    "verified_on": "2026-11-20",
+    "repository_commit": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+    "manifest": "Group19_A/data/splits/manifest.json",
+    "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+    "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+    "seed": 42,
+    "stratify": "Machine failure",
+    "split_sizes": {"train": 7000, "validation": 1500, "test": 1500}
+  },
+  "target": {
+    "column": "Machine failure",
+    "positive_label": 1,
+    "excluded_inputs": ["UDI", "Product ID", "Machine failure", "TWF", "HDF", "PWF", "OSF", "RNF"],
+    "retain_original_labels": true,
+    "audited_inconsistent_rows_retained": 27
+  },
+  "fit": {
+    "partition": "train",
+    "use_all_rows": true,
+    "labeled_failures_included": 237,
+    "inputs": "features_only",
+    "fit_preprocessing_on": "train"
+  },
+  "feature_sets": {
+    "raw": {
+      "engineered": false,
+      "columns": ["Air temperature [K]", "Process temperature [K]", "Rotational speed [rpm]", "Torque [Nm]", "Tool wear [min]", "Type"]
+    },
+    "engineered": {
+      "engineered": true,
+      "extends": "raw",
+      "additional_columns": ["temperature_difference", "mechanical_power", "wear_load"]
+    }
+  },
+  "type_encoding": "one_hot",
+  "models": {
+    "IsolationForest": {
+      "scale_numeric": false,
+      "fixed_params": {"random_state": 42, "contamination": "auto"},
+      "candidates": [
+        {"n_estimators": 100, "max_samples": 256},
+        {"n_estimators": 100, "max_samples": 1024},
+        {"n_estimators": 300, "max_samples": 256},
+        {"n_estimators": 300, "max_samples": 1024},
+        {"n_estimators": 100, "max_samples": 2048},
+        {"n_estimators": 100, "max_samples": 4096},
+        {"n_estimators": 300, "max_samples": 2048},
+        {"n_estimators": 300, "max_samples": 4096}
+      ]
+    },
+    "LocalOutlierFactor": {
+      "scale_numeric": true,
+      "fixed_params": {"novelty": true, "metric": "euclidean", "contamination": "auto"},
+      "candidates": [
+        {"n_neighbors": 10},
+        {"n_neighbors": 20},
+        {"n_neighbors": 40},
+        {"n_neighbors": 80},
+        {"n_neighbors": 60},
+        {"n_neighbors": 120},
+        {"n_neighbors": 160},
+        {"n_neighbors": 240}
+      ]
+    }
+  },
+  "selection": {
+    "partition": "validation",
+    "group_by": ["model", "feature_set"],
+    "maximize": "sklearn.metrics.average_precision_score",
+    "tie_break": "first_in_candidate_list",
+    "compare_before_rounding": true
+  },
+  "binary_alarm": {
+    "score": "-model.score_samples(X)",
+    "predict_positive_when": "score >= threshold",
+    "calibration_partition": "validation",
+    "calibrate_per": ["selected_model", "feature_set"],
+    "threshold_candidates": "distinct_observed_validation_scores",
+    "maximize": "positive_class_f1",
+    "tie_break": "highest_threshold"
+  },
+  "evaluation": {
+    "ranking_metrics": ["average_precision", "roc_auc"],
+    "alarm_metrics": ["precision", "recall", "f1", "tp", "fp", "tn", "fn"],
+    "test_access": "after_model_preprocessor_and_threshold_freeze"
+  },
+  "coordination": {
+    "c_status": "pending_alignment",
+    "shared_comparison_proposed": "raw",
+    "pair_engineered_results_only_with": "engineered",
+    "binary_threshold_rule_proposed_to_c": "binary_alarm",
+    "diagnostic_validation_normal_fpr_for_d": 0.05
+  }
+}

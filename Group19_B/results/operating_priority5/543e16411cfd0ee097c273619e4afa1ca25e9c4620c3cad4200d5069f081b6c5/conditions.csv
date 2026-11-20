@@ -1,0 +1,7 @@
+group,n,median_rpm,high_n,torque_central,power_central,wear_central,all_central
+all_normal,1449,1512.0,175,141,137,133,103
+all_pwf,10,1422.5,3,2,2,2,2
+lof_fp,28,1959.0,17,15,14,10,9
+fusion_fp,13,1356.0,4,4,3,2,2
+residual_fp,42,1616.0,17,15,14,10,9
+lof_fusion_shared_fp,6,2302.5,4,4,3,2,2
