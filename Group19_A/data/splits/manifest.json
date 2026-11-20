@@ -1,0 +1,12 @@
+{
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "seed": 42,
+  "split_fractions": [
+    0.7,
+    0.15,
+    0.15
+  ],
+  "stratify": "Machine failure",
+  "index_definition": "zero-based row position in unchanged raw CSV",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b"
+}

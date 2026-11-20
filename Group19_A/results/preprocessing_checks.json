@@ -1,0 +1,96 @@
+[
+  {
+    "engineered": false,
+    "scaled": false,
+    "train_shape": [
+      7000,
+      8
+    ],
+    "validation_shape": [
+      1500,
+      8
+    ],
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ]
+  },
+  {
+    "engineered": false,
+    "scaled": true,
+    "train_shape": [
+      7000,
+      8
+    ],
+    "validation_shape": [
+      1500,
+      8
+    ],
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ]
+  },
+  {
+    "engineered": true,
+    "scaled": false,
+    "train_shape": [
+      7000,
+      11
+    ],
+    "validation_shape": [
+      1500,
+      11
+    ],
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "temperature_difference",
+      "mechanical_power",
+      "wear_load",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ]
+  },
+  {
+    "engineered": true,
+    "scaled": true,
+    "train_shape": [
+      7000,
+      11
+    ],
+    "validation_shape": [
+      1500,
+      11
+    ],
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "temperature_difference",
+      "mechanical_power",
+      "wear_load",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ]
+  }
+]

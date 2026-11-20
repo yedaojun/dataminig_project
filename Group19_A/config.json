@@ -1,0 +1,11 @@
+{
+  "seed": 42,
+  "split_fractions": [0.7, 0.15, 0.15],
+  "stratify": "Machine failure",
+  "primary_metric": "average_precision",
+  "validation_normal_fpr": 0.05,
+  "noise_std_multipliers": [0, 0.1, 0.2, 0.5],
+  "noise_seeds": [101, 102, 103, 104, 105],
+  "sensor_std_ddof": 0,
+  "test_model_evaluation_authorized": false
+}

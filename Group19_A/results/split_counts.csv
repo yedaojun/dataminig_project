@@ -1,0 +1,4 @@
+split,n,normal,Machine failure,TWF,HDF,PWF,OSF,RNF
+train,7000,6763,237,33,73,72,71,13
+validation,1500,1449,51,5,24,10,12,4
+test,1500,1449,51,8,18,13,15,2

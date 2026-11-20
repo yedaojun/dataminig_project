@@ -1,0 +1,12 @@
+{
+  "rows": 10000,
+  "columns": 14,
+  "missing_cells": 0,
+  "duplicate_full_rows": 0,
+  "duplicate_input_rows": 0,
+  "duplicate_rows_excluding_ids": 0,
+  "label_inconsistencies": 27,
+  "failure_without_mode": 9,
+  "mode_without_failure": 18,
+  "multiple_mode_rows": 24
+}

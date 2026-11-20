@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#4b647f"/></marker></defs>
+<rect width="1200" height="470" fill="#f4f7fb"/>
+<g font-family="Arial, sans-serif" fill="#172b46">
+<text x="45" y="55" font-size="28" font-weight="bold">Group 19 | Shared data and reproducibility pipeline</text>
+<g fill="white" stroke="#b8c8da" stroke-width="2">
+<rect x="45" y="100" width="240" height="120" rx="12"/><rect x="335" y="100" width="240" height="120" rx="12"/>
+<rect x="625" y="100" width="240" height="120" rx="12"/><rect x="915" y="100" width="240" height="120" rx="12"/>
+<rect x="335" y="300" width="530" height="115" rx="12"/>
+</g>
+<g font-size="20" text-anchor="middle">
+<text x="165" y="135" font-weight="bold">Raw data + audit</text><text x="165" y="166">10,000 records</text><text x="165" y="195">Preserve original labels</text>
+<text x="455" y="135" font-weight="bold">Freeze split indices</text><text x="455" y="166">7,000 / 1,500 / 1,500</text><text x="455" y="195">Stratify: Machine failure</text>
+<text x="745" y="135" font-weight="bold">Shared preprocessing</text><text x="745" y="166">Fit on training data only</text><text x="745" y="195">Raw / engineered inputs</text>
+<text x="1035" y="135" font-weight="bold">B / C / D modules</text><text x="1035" y="166">Tune on validation</text><text x="1035" y="195">Freeze, then test</text>
+<text x="600" y="336" font-weight="bold">Integration and reproducibility</text><text x="600" y="367">Data hash + seeds + environment + configuration</text><text x="600" y="397">Reproduce final tables and figures after module integration</text>
+</g>
+<g stroke="#4b647f" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M285 160 H325"/><path d="M575 160 H615"/><path d="M865 160 H905"/><path d="M1035 220 V357 H875"/></g>
+<text x="45" y="450" font-size="15">A foundation implemented; B/C/D integration and final model evaluation pending.</text>
+</g></svg>
