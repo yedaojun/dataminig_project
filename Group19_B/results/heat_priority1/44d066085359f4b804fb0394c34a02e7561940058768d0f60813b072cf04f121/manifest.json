@@ -1,0 +1,42 @@
+{
+  "baseline": "38bfe87136caff9241c459e5061c6ec4e53236b7174f6f4598483a7909b30d71",
+  "model_params": {
+    "IsolationForest": {
+      "bootstrap": false,
+      "contamination": "auto",
+      "max_features": 1.0,
+      "max_samples": 2048,
+      "n_estimators": 100,
+      "n_jobs": null,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "LocalOutlierFactor": {
+      "algorithm": "auto",
+      "contamination": "auto",
+      "leaf_size": 30,
+      "metric": "euclidean",
+      "metric_params": null,
+      "n_jobs": null,
+      "n_neighbors": 160,
+      "novelty": true,
+      "p": 2
+    }
+  },
+  "training_rows": 7000,
+  "validation_rows": 1500,
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "source_sha256": "794dc588d5a63b02020fcddf6f53efa36b57cc7e35d02470db522559e7d78040",
+  "columns_thermal": [
+    "temperature_difference",
+    "Rotational speed [rpm]"
+  ],
+  "joint_low": "1 - max(train ECDF(delta_T rounded to 0.1 K), train ECDF(rpm)); ties use <=",
+  "artifact_sha256": {
+    "budgets.csv": "c82177093e462fcabd7708c9c9848988e1a07a79218ceb347d6a5629449f0ebe",
+    "metrics.csv": "73fe9844d5e8ac1c345a098d93984a08d1d17c2b1269d78844eaa172f9a1aaf2",
+    "predictions.csv": "bfb7657dc6c3ae23b3f6aaaacebbb4b87234ae1fd66a18e946b448fc027c6b37"
+  }
+}

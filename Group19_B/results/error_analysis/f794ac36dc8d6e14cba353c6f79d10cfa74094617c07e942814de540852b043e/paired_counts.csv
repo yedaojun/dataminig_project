@@ -1,0 +1,7 @@
+comparison,first,second,y_true,both,first_only,second_only,neither
+raw,raw_IsolationForest_6,raw_LocalOutlierFactor_7,0,11,3,38,1397
+raw,raw_IsolationForest_6,raw_LocalOutlierFactor_7,1,5,0,11,35
+engineered,engineered_IsolationForest_5,engineered_LocalOutlierFactor_7,0,6,9,17,1417
+engineered,engineered_IsolationForest_5,engineered_LocalOutlierFactor_7,1,12,2,0,37
+fusion_vs_engineered_lof,heat_lof_percentile_max,engineered_LocalOutlierFactor_7,0,6,0,17,1426
+fusion_vs_engineered_lof,heat_lof_percentile_max,engineered_LocalOutlierFactor_7,1,8,13,4,26

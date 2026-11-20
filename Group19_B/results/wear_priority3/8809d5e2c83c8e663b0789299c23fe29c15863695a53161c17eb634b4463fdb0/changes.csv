@@ -1,0 +1,9 @@
+candidate,comparator,operating_point,tp_new,tp_lost,tp_kept,fp_new,fp_lost,fp_kept,osf_new,osf_lost,osf_kept,hdf_new,hdf_lost,hdf_kept,pwf_new,pwf_lost,pwf_kept
+type_load_IsolationForest,engineering_IsolationForest,calibrated,1,0,10,1,2,16,0,0,5,0,0,1,1,0,6
+type_load_IsolationForest,engineering_IsolationForest,top41_through_ties,1,0,11,5,6,24,1,0,5,0,0,1,0,0,7
+type_load_IsolationForest,fusion,calibrated,3,20,8,11,7,6,2,0,3,0,19,1,2,1,5
+type_load_IsolationForest,fusion,top41_through_ties,4,20,8,23,7,6,3,0,3,0,19,1,2,1,5
+type_load_LocalOutlierFactor,engineering_LocalOutlierFactor,calibrated,1,1,12,1,2,26,0,1,4,0,0,1,1,0,9
+type_load_LocalOutlierFactor,engineering_LocalOutlierFactor,top41_through_ties,1,1,12,2,2,26,0,1,4,0,0,1,1,0,9
+type_load_LocalOutlierFactor,fusion,calibrated,4,19,9,21,7,6,1,0,3,0,19,1,4,0,6
+type_load_LocalOutlierFactor,fusion,top41_through_ties,4,19,9,22,7,6,1,0,3,0,19,1,4,0,6

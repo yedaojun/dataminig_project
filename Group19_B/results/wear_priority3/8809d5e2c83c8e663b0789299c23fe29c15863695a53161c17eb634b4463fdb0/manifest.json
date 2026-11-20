@@ -1,0 +1,44 @@
+{
+  "retained_best": "4db6488900fe61a295e73994d50ce72eaa8b968f99767fb731ec3f4637babc4b",
+  "paired_baseline": "38bfe87136caff9241c459e5061c6ec4e53236b7174f6f4598483a7909b30d71",
+  "model_params": {
+    "type_load_IsolationForest": {
+      "bootstrap": false,
+      "contamination": "auto",
+      "max_features": 1.0,
+      "max_samples": 2048,
+      "n_estimators": 100,
+      "n_jobs": null,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "type_load_LocalOutlierFactor": {
+      "algorithm": "auto",
+      "contamination": "auto",
+      "leaf_size": 30,
+      "metric": "euclidean",
+      "metric_params": null,
+      "n_jobs": null,
+      "n_neighbors": 160,
+      "novelty": true,
+      "p": 2
+    }
+  },
+  "training_support": {
+    "L": 4217,
+    "M": 2078,
+    "H": 705
+  },
+  "fallback_below": 100,
+  "feature": "ECDF within product Type of training wear_load rounded to 0.1 minNm; ties use <=",
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "source_sha256": "a7df3f0df52c4d767aaf1ae06df5914024954cb2fe98dec85959d4463f543612",
+  "artifact_sha256": {
+    "by_type.csv": "e4b918966775bc0337ef0e8cc384e3a28be3752bb3b69fde59c78f28ee150cb3",
+    "changes.csv": "1eda023e8c54fd331c08b3aaf410659aafb2f6ee27963bc4d408ff594c73e46e",
+    "metrics.csv": "4ee0ee22de6fa69a5936261fd13d42a9eef8c9bba0f4fac033750d02ba1d4a08",
+    "predictions.csv": "6acc9e138c85b53fa16c790d5adde953c2696224a838a955479106fb23d2c61b"
+  }
+}

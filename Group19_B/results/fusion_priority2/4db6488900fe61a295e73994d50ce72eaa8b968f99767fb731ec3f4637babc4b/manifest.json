@@ -1,0 +1,29 @@
+{
+  "baseline": "38bfe87136caff9241c459e5061c6ec4e53236b7174f6f4598483a7909b30d71",
+  "heat_run": "44d066085359f4b804fb0394c34a02e7561940058768d0f60813b072cf04f121",
+  "model": "engineered_LocalOutlierFactor_7",
+  "params": {
+    "algorithm": "auto",
+    "contamination": "auto",
+    "leaf_size": 30,
+    "metric": "euclidean",
+    "metric_params": null,
+    "n_jobs": null,
+    "n_neighbors": 160,
+    "novelty": true,
+    "p": 2
+  },
+  "reference": "KFold(5, shuffle=True, random_state=42); train-only out-of-fold h and LOF",
+  "fusion": "max(ECDF_oof_h(h), ECDF_oof_lof(lof)); right-inclusive empirical CDF",
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "source_sha256": "d4734007b96ddc8ad00416fe59b7c44c3aecf590c5292a84047215cab5cfe086",
+  "artifact_sha256": {
+    "budgets.csv": "edef5aa2adf408b4784f569622deb27e528b2d45c1a02357415b0e387d57f572",
+    "changes.csv": "5c34135456457cf4c9038038b88717fc4a27fff103ab539036b6e3ccb2a372a8",
+    "metrics.csv": "f01dedb62ac5b9a1f9e64dd8cb6b66c6a70ab72de1f9e74f27b66a0bbc3008ce",
+    "oof.csv": "ac3ae45cd30d838ce68a4c673f43e20c522244548467261b37958ad3a6f8dac0",
+    "predictions.csv": "b253bb20a58cc9d7d5720993d70a2616f510722720730522444b5ccd7d0915b3",
+    "scale.csv": "e1e09a9520a1b675a77fc127c09f58d46c57030a73e5766943165d1b5df665dd"
+  }
+}

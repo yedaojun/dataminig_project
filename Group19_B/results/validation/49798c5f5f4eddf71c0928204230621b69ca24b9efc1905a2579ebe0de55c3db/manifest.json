@@ -1,0 +1,578 @@
+{
+  "git_head": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+  "source_sha256": {
+    "Group19_A/pipeline.py": "651eef475b3dd3eb5844e33825544d71670bf17bd64a02b0c0a2f2b4128f8612",
+    "Group19_B/config.json": "d0a7723416a2811927a5f1aea4c4dac858e9b2ee493ce3b5606139fccce534ac",
+    "Group19_B/run.py": "611666dd657e4024ad85a934c0ed309c38141efc69d1d0fd5968924174d0e704",
+    "Group19_B/scoring.py": "d39fbf5c12f613e5de5ed8a993f72e70dd854cfb2b9b56d3a0e363a7aad10dde"
+  },
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.1.2",
+    "pandas": "2.2.3",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.2",
+    "joblib": "1.4.2"
+  },
+  "baseline": {
+    "verified_on": "2026-11-20",
+    "repository_commit": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+    "manifest": "Group19_A/data/splits/manifest.json",
+    "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+    "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+    "seed": 42,
+    "stratify": "Machine failure",
+    "split_sizes": {
+      "train": 7000,
+      "validation": 1500,
+      "test": 1500
+    }
+  },
+  "fit_partition": "train",
+  "score_partition": "validation",
+  "score": "-model.score_samples(X)",
+  "score_direction": "higher_is_more_anomalous",
+  "alarm_rule": "score >= threshold",
+  "candidates": {
+    "raw_IsolationForest_1": {
+      "model": "IsolationForest",
+      "feature_set": "raw",
+      "order": 1,
+      "preprocessor_key": "raw_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 256,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.06640222612347782,
+        "roc_auc": 0.6911866195753664
+      }
+    },
+    "raw_IsolationForest_2": {
+      "model": "IsolationForest",
+      "feature_set": "raw",
+      "order": 2,
+      "preprocessor_key": "raw_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 1024,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.07972793040583655,
+        "roc_auc": 0.7244347014167987
+      }
+    },
+    "raw_IsolationForest_3": {
+      "model": "IsolationForest",
+      "feature_set": "raw",
+      "order": 3,
+      "preprocessor_key": "raw_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 256,
+        "n_estimators": 300,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.06595796503626701,
+        "roc_auc": 0.7049215821594339
+      }
+    },
+    "raw_IsolationForest_4": {
+      "model": "IsolationForest",
+      "feature_set": "raw",
+      "order": 4,
+      "preprocessor_key": "raw_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 1024,
+        "n_estimators": 300,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.07681051628243528,
+        "roc_auc": 0.723839294171775
+      }
+    },
+    "raw_LocalOutlierFactor_1": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw",
+      "order": 1,
+      "preprocessor_key": "raw_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 10,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.1373204845603589,
+        "roc_auc": 0.7663973802081219
+      }
+    },
+    "raw_LocalOutlierFactor_2": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw",
+      "order": 2,
+      "preprocessor_key": "raw_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 20,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.13087748485793332,
+        "roc_auc": 0.8004979769685652
+      }
+    },
+    "raw_LocalOutlierFactor_3": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw",
+      "order": 3,
+      "preprocessor_key": "raw_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 40,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.1370878464354537,
+        "roc_auc": 0.8082923990852379
+      }
+    },
+    "raw_LocalOutlierFactor_4": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw",
+      "order": 4,
+      "preprocessor_key": "raw_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 80,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.14407389762746198,
+        "roc_auc": 0.7981028160056293
+      }
+    },
+    "engineered_IsolationForest_1": {
+      "model": "IsolationForest",
+      "feature_set": "engineered",
+      "order": 1,
+      "preprocessor_key": "engineered_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 256,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.14694463018339232,
+        "roc_auc": 0.8033938212966345
+      }
+    },
+    "engineered_IsolationForest_2": {
+      "model": "IsolationForest",
+      "feature_set": "engineered",
+      "order": 2,
+      "preprocessor_key": "engineered_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 1024,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.20962669811625967,
+        "roc_auc": 0.8215943382183791
+      }
+    },
+    "engineered_IsolationForest_3": {
+      "model": "IsolationForest",
+      "feature_set": "engineered",
+      "order": 3,
+      "preprocessor_key": "engineered_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 256,
+        "n_estimators": 300,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.15237526254990236,
+        "roc_auc": 0.8015128756816736
+      }
+    },
+    "engineered_IsolationForest_4": {
+      "model": "IsolationForest",
+      "feature_set": "engineered",
+      "order": 4,
+      "preprocessor_key": "engineered_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 1024,
+        "n_estimators": 300,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.1902200000759634,
+        "roc_auc": 0.8151395824030094
+      }
+    },
+    "engineered_LocalOutlierFactor_1": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "engineered",
+      "order": 1,
+      "preprocessor_key": "engineered_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 10,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.14737818126158075,
+        "roc_auc": 0.8079135035656774
+      }
+    },
+    "engineered_LocalOutlierFactor_2": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "engineered",
+      "order": 2,
+      "preprocessor_key": "engineered_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 20,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.16972874958179152,
+        "roc_auc": 0.830484850945209
+      }
+    },
+    "engineered_LocalOutlierFactor_3": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "engineered",
+      "order": 3,
+      "preprocessor_key": "engineered_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 40,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.19515661472774304,
+        "roc_auc": 0.8308231505162451
+      }
+    },
+    "engineered_LocalOutlierFactor_4": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "engineered",
+      "order": 4,
+      "preprocessor_key": "engineered_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 80,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.20807310636059154,
+        "roc_auc": 0.8117565866926482
+      }
+    }
+  },
+  "artifact_sha256": {
+    "scores.csv": "1eba3507af244017b2da89236d04a179c0867c4c8e0442193b6c4c3373e26b00",
+    "fits.joblib": "6b9548ade5a2b328b6b23b22e04396be5f44674ca8b8b2630289cbf79039f513"
+  }
+}

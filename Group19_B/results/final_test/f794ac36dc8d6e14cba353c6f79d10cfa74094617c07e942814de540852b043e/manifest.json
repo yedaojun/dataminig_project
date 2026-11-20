@@ -1,0 +1,49 @@
+{
+  "baseline_run": "38bfe87136caff9241c459e5061c6ec4e53236b7174f6f4598483a7909b30d71",
+  "fusion_run": "4db6488900fe61a295e73994d50ce72eaa8b968f99767fb731ec3f4637babc4b",
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "split": "test",
+  "positive_label": 1,
+  "groups": {
+    "raw": "B/C primary",
+    "engineered": "common engineered inputs",
+    "heat_fusion": "B extension"
+  },
+  "validation_replay_rows": 7500,
+  "thresholds": {
+    "raw_IsolationForest_6": 0.5938338218230496,
+    "raw_LocalOutlierFactor_7": 1.221048573003318,
+    "engineered_IsolationForest_5": 0.580500506898141,
+    "engineered_LocalOutlierFactor_7": 1.2540442589617558,
+    "heat_lof_percentile_max": 0.9877142857142858
+  },
+  "alarm_rule": "score >= threshold",
+  "plot_matplotlib": "3.11.1",
+  "fit_environment": {
+    "python": "3.12.7",
+    "numpy": "2.1.2",
+    "pandas": "2.2.3",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.2",
+    "joblib": "1.4.2"
+  },
+  "source_sha256": {
+    "Group19_B/final_evaluation.py": "b0493bc52f6521bb76a395f96620216e4a5ac2518c7bdd35892a17738155fe04",
+    "Group19_B/run.py": "91a5b05430d2028fdb270c8967bc4e0e2fae832f1a2899afa16e00c62b46ae55",
+    "Group19_B/plot_test_curves.py": "d6c30b265e125b4314f754bf51e129b87526e8fff5e428837bce49ace53cc8a4",
+    "Group19_B/fusion_experiment.py": "d4734007b96ddc8ad00416fe59b7c44c3aecf590c5292a84047215cab5cfe086",
+    "Group19_B/heat_experiment.py": "794dc588d5a63b02020fcddf6f53efa36b57cc7e35d02470db522559e7d78040",
+    "Group19_B/wear_experiment.py": "a7df3f0df52c4d767aaf1ae06df5914024954cb2fe98dec85959d4463f543612",
+    "Group19_B/scoring.py": "d39fbf5c12f613e5de5ed8a993f72e70dd854cfb2b9b56d3a0e363a7aad10dde",
+    "Group19_B/freezing.py": "88dd99e82010d214d8dcb243819cd69dde80feb89c2e7165d754259fbd520878",
+    "Group19_A/pipeline.py": "651eef475b3dd3eb5844e33825544d71670bf17bd64a02b0c0a2f2b4128f8612"
+  },
+  "artifact_sha256": {
+    "curves.csv": "f08f576d9f1f510dbc51f69d2656472b9f0d19d43baf4c67e7605f04f5ac9cd3",
+    "metrics.csv": "bf50c79545c4c956272d3251b7e77712c74b39dc1c7ade293beed67b850b6f13",
+    "pr.png": "f5ebdc3c6e41f51df806610beef11a476bfaa69c5468622effef24391122a9cc",
+    "predictions.csv": "7113aad3bbf4fd574491d06e3c781b8918188af644059bacde33b8dc27defdbf",
+    "roc.png": "ab6fe15ad9b39dd9c4ad7b40d91f96fe0dced393d14d5621f5dac7cba738b015"
+  }
+}

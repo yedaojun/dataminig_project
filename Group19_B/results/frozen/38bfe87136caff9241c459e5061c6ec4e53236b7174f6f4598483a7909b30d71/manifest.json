@@ -1,0 +1,290 @@
+{
+  "validation_run": "f890672401753f26f7ff9c0db21088005d84caa50be9b4e486c2d7b448a27722",
+  "candidate_table_sha256": "08307d3a7e0af26c66371ed9ae60f7382ac634c3bd4c17a2725e963adf0d4f1c",
+  "config_sha256": "0b9dc44c4fe212d9fd5700702034e78c1525a28125fe6739b6de3ff78a192356",
+  "baseline": {
+    "verified_on": "2026-11-20",
+    "repository_commit": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+    "manifest": "Group19_A/data/splits/manifest.json",
+    "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+    "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+    "seed": 42,
+    "stratify": "Machine failure",
+    "split_sizes": {
+      "train": 7000,
+      "validation": 1500,
+      "test": 1500
+    }
+  },
+  "fit_environment": {
+    "python": "3.12.7",
+    "numpy": "2.1.2",
+    "pandas": "2.2.3",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.2",
+    "joblib": "1.4.2"
+  },
+  "fit_git_head": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+  "fit_source_sha256": {
+    "Group19_A/pipeline.py": "651eef475b3dd3eb5844e33825544d71670bf17bd64a02b0c0a2f2b4128f8612",
+    "Group19_B/config.json": "0b9dc44c4fe212d9fd5700702034e78c1525a28125fe6739b6de3ff78a192356",
+    "Group19_B/run.py": "611666dd657e4024ad85a934c0ed309c38141efc69d1d0fd5968924174d0e704",
+    "Group19_B/scoring.py": "d39fbf5c12f613e5de5ed8a993f72e70dd854cfb2b9b56d3a0e363a7aad10dde"
+  },
+  "freeze_git_head": "ecb7afa70dc7d84fc8ad43cb5553d69ce11f2028",
+  "freeze_source_sha256": {
+    "run.py": "74ef8b111124f8e399e744d0f98b2cc6154506b71ee8c9bf9b62b31b0774379a",
+    "scoring.py": "d39fbf5c12f613e5de5ed8a993f72e70dd854cfb2b9b56d3a0e363a7aad10dde",
+    "freezing.py": "88dd99e82010d214d8dcb243819cd69dde80feb89c2e7165d754259fbd520878"
+  },
+  "selection": {
+    "partition": "validation",
+    "group_by": [
+      "model",
+      "feature_set"
+    ],
+    "maximize": "sklearn.metrics.average_precision_score",
+    "tie_break": "first_in_candidate_list",
+    "compare_before_rounding": true
+  },
+  "binary_alarm": {
+    "score": "-model.score_samples(X)",
+    "predict_positive_when": "score >= threshold",
+    "calibration_partition": "validation",
+    "calibrate_per": [
+      "selected_model",
+      "feature_set"
+    ],
+    "threshold_candidates": "distinct_observed_validation_scores",
+    "maximize": "positive_class_f1",
+    "tie_break": "highest_threshold"
+  },
+  "score_direction": "higher_is_more_anomalous",
+  "reload_tolerance": {
+    "rtol": 0,
+    "atol": 0
+  },
+  "selected": {
+    "raw_IsolationForest_6": {
+      "model": "IsolationForest",
+      "feature_set": "raw",
+      "order": 6,
+      "preprocessor_key": "raw_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 4096,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.10043401051962127,
+        "roc_auc": 0.7237851662404092
+      },
+      "engineered": false,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type"
+      ],
+      "threshold": 0.5938338218230496,
+      "validation_alarm_metrics": {
+        "tp": 6,
+        "fp": 30,
+        "tn": 1419,
+        "fn": 45,
+        "precision": 0.16666666666666666,
+        "recall": 0.11764705882352941,
+        "f1": 0.13793103448275862
+      }
+    },
+    "raw_LocalOutlierFactor_7": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw",
+      "order": 7,
+      "preprocessor_key": "raw_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 160,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.14845494322478187,
+        "roc_auc": 0.7596178568045575
+      },
+      "engineered": false,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type"
+      ],
+      "threshold": 1.221048573003318,
+      "validation_alarm_metrics": {
+        "tp": 17,
+        "fp": 72,
+        "tn": 1377,
+        "fn": 34,
+        "precision": 0.19101123595505617,
+        "recall": 0.3333333333333333,
+        "f1": 0.24285714285714285
+      }
+    },
+    "engineered_IsolationForest_5": {
+      "model": "IsolationForest",
+      "feature_set": "engineered",
+      "order": 5,
+      "preprocessor_key": "engineered_IsolationForest",
+      "scale_numeric": false,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "max_features": 1.0,
+        "max_samples": 2048,
+        "n_estimators": 100,
+        "n_jobs": null,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "validation_metrics": {
+        "average_precision": 0.2105937165600286,
+        "roc_auc": 0.8149636666260707
+      },
+      "engineered": true,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load"
+      ],
+      "threshold": 0.580500506898141,
+      "validation_alarm_metrics": {
+        "tp": 10,
+        "fp": 18,
+        "tn": 1431,
+        "fn": 41,
+        "precision": 0.35714285714285715,
+        "recall": 0.19607843137254902,
+        "f1": 0.25316455696202533
+      }
+    },
+    "engineered_LocalOutlierFactor_7": {
+      "model": "LocalOutlierFactor",
+      "feature_set": "engineered",
+      "order": 7,
+      "preprocessor_key": "engineered_LocalOutlierFactor",
+      "scale_numeric": true,
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "params": {
+        "algorithm": "auto",
+        "contamination": "auto",
+        "leaf_size": 30,
+        "metric": "euclidean",
+        "metric_params": null,
+        "n_jobs": null,
+        "n_neighbors": 160,
+        "novelty": true,
+        "p": 2
+      },
+      "validation_metrics": {
+        "average_precision": 0.24116445194676442,
+        "roc_auc": 0.8032449694853787
+      },
+      "engineered": true,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load"
+      ],
+      "threshold": 1.2540442589617558,
+      "validation_alarm_metrics": {
+        "tp": 13,
+        "fp": 28,
+        "tn": 1421,
+        "fn": 38,
+        "precision": 0.3170731707317073,
+        "recall": 0.2549019607843137,
+        "f1": 0.2826086956521739
+      }
+    }
+  },
+  "artifact_sha256": {
+    "metrics.csv": "c854b1e1bae99b897bd2530fa8c45221c3e45772f1b265db12d867ef009b05bf",
+    "models.joblib": "65114317f65409b89f704ad735486bbecc7769af803d0f8d640e14bbbfc8c15d",
+    "predictions.csv": "f6a15a5f564ec16db4743ed39a2403f0bb3d4a402f297daf2f63cd994ad3ce82"
+  }
+}
