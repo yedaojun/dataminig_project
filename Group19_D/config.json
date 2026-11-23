@@ -1,0 +1,77 @@
+{
+  "protocol_version": 1,
+  "seed": 42,
+  "model": "one_vs_rest_random_forest",
+  "feature_sets": [
+    "raw",
+    "engineered"
+  ],
+  "fixed_forest_params": {
+    "n_estimators": 200,
+    "n_jobs": -1
+  },
+  "candidates": [
+    {
+      "max_depth": 8,
+      "min_samples_leaf": 1
+    },
+    {
+      "max_depth": 12,
+      "min_samples_leaf": 1
+    },
+    {
+      "max_depth": null,
+      "min_samples_leaf": 2
+    }
+  ],
+  "selection": {
+    "partition": "validation",
+    "group_by": "feature_set",
+    "metric": "macro_average_precision_across_five_modes",
+    "tie_break": "first_candidate_in_config_order",
+    "compare_before_rounding": true
+  },
+  "diagnostic_threshold": {
+    "partition": "validation",
+    "calibration_rows": "Machine failure == 0",
+    "target_false_positive_rate": 0.05,
+    "per": [
+      "feature_set",
+      "mode"
+    ],
+    "allowed_false_positives": "floor(target_false_positive_rate * number_of_validation_normals)",
+    "rule": "threshold = nextafter(score_at_allowed_rank, +inf)",
+    "alarm_rule": "score >= threshold",
+    "test_retuning": false
+  },
+  "noise": {
+    "partition": "test",
+    "multipliers": [
+      0,
+      0.1,
+      0.2,
+      0.5
+    ],
+    "seeds": [
+      101,
+      102,
+      103,
+      104,
+      105
+    ],
+    "sensor_scale": "training-standard-deviation",
+    "standard_deviation_ddof": 0,
+    "distribution": "independent Gaussian noise",
+    "type_perturbed": false,
+    "recompute_engineered_features_after_perturbation": true,
+    "refit_or_retune": false,
+    "binary_supplement": {
+      "source": "Group19_B",
+      "selection": "highest validation AP among B raw-input models",
+      "candidate": "raw_LocalOutlierFactor_7",
+      "score": "-LocalOutlierFactor.score_samples(preprocessed raw features)",
+      "threshold": "Group19_B frozen validation-calibrated threshold",
+      "purpose": "single preselected binary failure-detection comparison"
+    }
+  }
+}

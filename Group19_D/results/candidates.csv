@@ -1,0 +1,7 @@
+candidate,model,feature_set,candidate_order,params,validation_macro_average_precision,validation_macro_roc_auc,modes,selected
+engineered_rf_0,RandomForest,engineered,0,"{""max_depth"": 8, ""min_samples_leaf"": 1}",0.61679662429951565,0.90693463408260511,5,0
+engineered_rf_1,RandomForest,engineered,1,"{""max_depth"": 12, ""min_samples_leaf"": 1}",0.61726691051990201,0.90601724776164139,5,1
+engineered_rf_2,RandomForest,engineered,2,"{""max_depth"": null, ""min_samples_leaf"": 2}",0.61313896272875146,0.89665473910776772,5,0
+raw_rf_0,RandomForest,raw,0,"{""max_depth"": 8, ""min_samples_leaf"": 1}",0.48255717781658836,0.89972063271249691,5,0
+raw_rf_1,RandomForest,raw,1,"{""max_depth"": 12, ""min_samples_leaf"": 1}",0.49384595659878788,0.90474640026828157,5,0
+raw_rf_2,RandomForest,raw,2,"{""max_depth"": null, ""min_samples_leaf"": 2}",0.50058962097633997,0.91448126945898145,5,1

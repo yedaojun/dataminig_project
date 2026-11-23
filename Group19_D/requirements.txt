@@ -1,0 +1,2 @@
+# Install Group19_A/requirements.txt first for the shared data pipeline.
+matplotlib>=3.8

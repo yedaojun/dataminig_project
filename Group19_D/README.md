@@ -1,0 +1,108 @@
+# Workstream D: five-mode diagnosis and sensor-noise robustness
+
+This module completes Group 19's diagnostic workstream. It uses A's frozen
+70/15/15 split and public preprocessing contract, trains an independent
+one-vs-rest random forest for each of `TWF`, `HDF`, `PWF`, `OSF`, and `RNF`,
+freezes validation-selected models and per-mode thresholds, and only then
+evaluates the 1,500-row test split. It also repeats the frozen pipeline under
+Gaussian sensor noise.
+
+## Reproduce from the repository root
+
+Install `Group19_A/requirements.txt`, then `Group19_D/requirements.txt`. The
+recorded run uses Python 3.12.7, NumPy 1.26.4, pandas 2.2.2, scikit-learn
+1.5.1, Matplotlib 3.9.2, and joblib 1.4.2.
+
+```shell
+python -m Group19_D.run tune
+python -m Group19_D.run evaluate-test
+python -m Group19_D.noise
+python -m Group19_D.check_results
+```
+
+Run `tune` and inspect `results/validation_metrics.csv` before
+`evaluate-test`. `evaluate-test` verifies the data, split, configuration,
+source, and serialized-model hashes before reading test. It never refits or
+retunes. The noise script performs a second hash check and reuses every frozen
+preprocessor, model, and threshold.
+
+## Diagnostic protocol
+
+For each input set, three random-forest configurations are fitted separately
+for all five modes. The configuration with the highest mean validation AP
+across the five modes is selected; an exact tie keeps the first configuration
+in `config.json`. This grid is fixed before test evaluation.
+
+| Input set | Columns | Numeric scaling |
+|---|---|---|
+| `raw` | five sensor readings plus one-hot product type | none |
+| `engineered` | raw inputs plus A's temperature difference, mechanical power, and wear-load features | none |
+
+Each mode receives its own threshold using only validation rows with
+`Machine failure == 0`. With 1,449 such rows, 5% permits at most 72 alarms. The
+threshold is placed immediately above the 73rd-highest normal score, and an
+alarm is `score >= threshold`. This handles ties and the finite-sample budget
+explicitly. Validation-normal rows with an inconsistent mode label remain in
+the denominator and are not removed.
+
+The test report therefore separates two negative-class definitions:
+
+- `normal_fpr`: alarms divided by the 1,449 test rows with total failure 0.
+- `mode_negative_fpr`: alarms divided by rows where that specific mode is 0.
+
+Macro metrics average the five mode-specific values. Micro metrics pool
+true/false positives and negatives over all 7,500 test mode rows. A record may
+be positive for multiple modes, so the five supports must not be summed to
+describe the number of failed machines.
+
+## Noise protocol
+
+Independent Gaussian noise is added to the five raw numeric sensor values at
+multipliers `0`, `0.1`, `0.2`, and `0.5` of A's training standard deviations
+(`ddof=0`). Seeds are `101` through `105`; `Type` is unchanged. Engineered
+features are recomputed from the perturbed raw readings. No model,
+preprocessor, or threshold is changed.
+
+At zero noise, every diagnostic score is checked row by row against the frozen
+test predictions. The supplementary binary comparison is B's raw LOF model,
+selected because it has the highest validation AP among B's raw-input models.
+That selection is based on validation results alone.
+
+## Outputs
+
+| File | Contents |
+|---|---|
+| `results/candidate_mode_metrics.csv`, `candidates.csv` | Validation AP/AUC for every candidate and mode, plus the selected candidate per input set |
+| `results/validation_predictions.csv`, `validation_metrics.csv` | Frozen validation scores, thresholds, mode metrics, and normal/mode-negative FPR denominators |
+| `results/frozen_models.joblib`, `freeze_manifest.json` | Fitted preprocessors and all mode models, hashes, selected parameters, and exact thresholds |
+| `results/test_predictions.csv`, `test_metrics.csv` | Row-level test scores and alarms; per-mode AP, ROC-AUC, precision, recall, F1, confusion counts, support, and both FPR definitions |
+| `results/test_aggregates.csv` | Macro and micro test metrics plus the any-mode alarm rate on total-failure normals |
+| `results/mode_support.csv` | Train/validation/test support for every mode and total failure |
+| `results/cases.csv` | Highest-scoring detected, false-positive, and missed examples with raw input context |
+| `results/mode_performance_heatmap.png` | Test AP and F1 by mode/input set with support labels |
+| `results/mode_pr_curves.png` | Test precision-recall curves for all ten mode/input-set combinations |
+| `results/noise_repeats.csv`, `noise_summary.csv` | Per-mode noise repeats and their mean/SD/min/max summaries |
+| `results/noise_aggregate_repeats.csv`, `noise_aggregate_summary.csv` | Macro AP/F1 and any-mode normal FPR across the five repeats |
+| `results/noise_robustness.png`, `noise_fpr.png` | D AP/F1 and realized normal-FPR robustness |
+| `results/binary_noise_repeats.csv`, `binary_noise_summary.csv`, `binary_noise_robustness.png` | B raw LOF robustness supplement |
+
+`test_predictions.csv` uses:
+
+```text
+partition, row_index, candidate, model, feature_set, mode,
+y_true, total_failure, score, threshold, alarm
+```
+
+`row_index` is the zero-based row position in A's unchanged raw CSV. Read
+floating-point CSV files with `float_precision="round_trip"` when checking
+threshold boundaries.
+
+## Interpretation limits
+
+This is diagnosis on a synthetic predictive-maintenance benchmark, not
+remaining-useful-life prediction or evidence of production performance. The
+same total-failure label generates several mode labels, and 27 audited label
+conflicts are retained. Test support is especially small for `RNF` (two
+positive records), so its AP, recall, and noise variation cannot justify a
+stable ranking. Engineered features mirror generator relationships and their
+gain should not be generalized to real machinery without external validation.

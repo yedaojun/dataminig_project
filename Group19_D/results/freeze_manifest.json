@@ -1,0 +1,141 @@
+{
+  "status": "frozen_before_test",
+  "protocol_version": 1,
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "config_sha256": "66d93994624d1c4158a01a4a65e989bc7ee717498a7305c0643a4e8059e3603b",
+  "run_code_sha256": "7b670b2b46eceecc2833c940c2e7bc0e86d3cc8251b0c5702995608da9c443d4",
+  "pipeline_code_sha256": "651eef475b3dd3eb5844e33825544d71670bf17bd64a02b0c0a2f2b4128f8612",
+  "models_sha256": "57bc078d4357be28b086d2643fb8a7b98ec49ebe7c6f60784b051ac338374eef",
+  "seed": 42,
+  "model": "one_vs_rest_random_forest",
+  "score_direction": "higher_means_more_likely_mode",
+  "replay_tolerance": {
+    "rtol": 0,
+    "atol": 1e-15
+  },
+  "selection": {
+    "partition": "validation",
+    "group_by": "feature_set",
+    "metric": "macro_average_precision_across_five_modes",
+    "tie_break": "first_candidate_in_config_order",
+    "compare_before_rounding": true
+  },
+  "diagnostic_threshold": {
+    "partition": "validation",
+    "calibration_rows": "Machine failure == 0",
+    "target_false_positive_rate": 0.05,
+    "per": [
+      "feature_set",
+      "mode"
+    ],
+    "allowed_false_positives": "floor(target_false_positive_rate * number_of_validation_normals)",
+    "rule": "threshold = nextafter(score_at_allowed_rank, +inf)",
+    "alarm_rule": "score >= threshold",
+    "test_retuning": false
+  },
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scikit-learn": "1.5.1",
+    "joblib": "1.4.2"
+  },
+  "sklearn_version": "1.5.1",
+  "selected": {
+    "raw": {
+      "candidate": "raw_rf_2",
+      "candidate_order": 2,
+      "params": {
+        "max_depth": null,
+        "min_samples_leaf": 2
+      },
+      "engineered": false,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type"
+      ],
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "validation_macro_average_precision": 0.5005896209763399,
+      "validation_macro_roc_auc": 0.9144812694589814,
+      "validation_normal_denominator": 1449,
+      "thresholds": {
+        "TWF": 0.01642857142857143,
+        "HDF": 0.01280952380952381,
+        "PWF": 0.009583333333333334,
+        "OSF": 0.015083333333333334,
+        "RNF": 0.009861111111111114
+      },
+      "allowed_validation_normal_fp": {
+        "TWF": 72,
+        "HDF": 72,
+        "PWF": 72,
+        "OSF": 72,
+        "RNF": 72
+      }
+    },
+    "engineered": {
+      "candidate": "engineered_rf_1",
+      "candidate_order": 1,
+      "params": {
+        "max_depth": 12,
+        "min_samples_leaf": 1
+      },
+      "engineered": true,
+      "input_columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Type",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load"
+      ],
+      "feature_names": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "temperature_difference",
+        "mechanical_power",
+        "wear_load",
+        "Type_H",
+        "Type_L",
+        "Type_M"
+      ],
+      "validation_macro_average_precision": 0.617266910519902,
+      "validation_macro_roc_auc": 0.9060172477616415,
+      "validation_normal_denominator": 1449,
+      "thresholds": {
+        "TWF": 0.012500000000000002,
+        "HDF": 0.005000000000000001,
+        "PWF": 8.090614886731392e-05,
+        "OSF": 5e-324,
+        "RNF": 0.015000000000000001
+      },
+      "allowed_validation_normal_fp": {
+        "TWF": 72,
+        "HDF": 72,
+        "PWF": 72,
+        "OSF": 72,
+        "RNF": 72
+      }
+    }
+  }
+}
