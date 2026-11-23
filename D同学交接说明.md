@@ -70,6 +70,7 @@ C 已实现 Logistic Regression、Random Forest、XGBoost，分别比较普通�
 - `Group19_C/results/freeze_manifest.json`、`frozen_models.joblib`：冻结参数、阈值、数据和代码指纹、已拟合模型。跨 Python / scikit-learn / XGBoost 版本加载 joblib 可能不兼容；必要时按 `Group19_C/README.md` 重训。
 - `Group19_C/results/test_predictions.csv`、`test_metrics.csv`：12 组测试预测与指标；`bc_comparison.csv`：B/C 统一对照。
 - `Group19_C/results/permutation_importance.csv`、`matched_feature_ablation.csv`：特征分析与同参数消融。
+- C 的补强结果还包括 `paired_bootstrap.csv`（测试 AP 的配对重采样区间）、`alarm_budgets.csv`（验证集定阈值后在测试集的报警代价）、`label_efficiency_summary.csv`（减少有标签训练行时的验证 AP）。这是**二分类**补充分析；D 的五种模式诊断和噪声实验仍需独立完成。
 - `python -m Group19_C.check_results`：核对 C 的分数、阈值、四格计数、标签及 B/C 行号。当前已通过。
 
 ## 五、D 的待完成工作与推荐步骤

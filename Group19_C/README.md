@@ -13,6 +13,8 @@ python -m Group19_C.run importance
 python -m Group19_C.run evaluate-test
 python -m Group19_C.check_results
 python -m Group19_C.plot_results
+python -m Group19_C.extended_analysis
+python -m Group19_C.check_extended
 ```
 
 Run `tune` and inspect the frozen validation results **before** `evaluate-test`. The latter checks hashes of the data, split, config, code, and serialized models before opening the test split. It never refits. Rerunning `tune` creates a new freeze and can overwrite the previous freeze; do not use test results to revise the grid or select a model.
@@ -35,9 +37,20 @@ Logistic regression standardizes numeric inputs and one-hot encodes `Type`. Tree
 | `results/bc_comparison.csv` | B's raw and engineered baselines beside C's corresponding models |
 | `results/permutation_importance.csv` | Three-repeat validation AP decrease after permuting each original input column, for the higher-validation-AP weighting per family and feature set |
 | `results/model_comparison.png`, `feature_importance.png`, `pr_roc.png` | Presentation figures, rebuilt with `plot_results.py` |
+| `results/paired_bootstrap.csv` | 2,000 paired, class-stratified test-row bootstrap replicates summarized as AP and AP-difference percentile intervals |
+| `results/alarm_budgets.csv`, `alarm_budgets.png` | Binary failure recall and realized false-positive rate at 1%, 2%, and 5% budgets calibrated only on validation normals |
+| `results/label_efficiency_repeats.csv`, `label_efficiency_summary.csv`, `label_efficiency.png` | Validation AP after refitting the frozen settings on 10%, 25%, 50%, and 100% of labeled training rows |
 
 `test_predictions.csv` follows B's `partition, candidate, row_index, model, feature_set, y_true, score, threshold, alarm` contract. It adds no test-tuned decisions. Read floating-point CSV with `float_precision="round_trip"` when checking exact threshold boundaries. `check_results.py` recomputes AP and ROC-AUC and checks labels, counts, alarms, unique row IDs, and alignment with B.
 
 ## Interpretation
 
 See [C_REPORT.md](C_REPORT.md) for the findings and report-ready text. The substantial engineered-feature gain for forest and XGBoost reflects known relationships used to generate this synthetic benchmark. Permutation importance is descriptive and can understate correlated inputs; it is not a causal attribution. The fixed 51 positive test rows also limit precision of comparisons. Noise robustness and per-mode diagnosis belong to D's workstream.
+
+## Additional evidence protocol
+
+`extended_analysis.py` reads the already-frozen C models and B/C predictions. It selects the examples in its comparison panel **only by saved validation AP**: the best B raw detector, best C raw classifier, and best C engineered classifier. For the feature comparison it also includes the unweighted raw and engineered forests; these share identical hyperparameters. No test metric chooses the panel. The script verifies C's data, split, code, config, and model fingerprints before use.
+
+The bootstrap samples the same test row IDs for both models, drawing failure and normal rows separately with replacement to keep the observed 51/1,449 class ratio. The 2.5th and 97.5th percentiles describe uncertainty from these **fixed-model, fixed-test-set row resamples**. They do not include model-training variability or establish real-world generalization. The 1%, 2%, and 5% alarm limits are calibrated on the 1,449 validation records with `Machine failure == 0`, with ties handled by setting the threshold just above the boundary score. A target validation FPR is not guaranteed on test. These binary alarm budgets are distinct from D's per-mode diagnostic thresholds.
+
+For label efficiency, the chosen C model hyperparameters stay fixed while 10%, 25%, and 50% of the labeled training **rows** are sampled within each class for five seeds (201–205); the 100% point fits all training rows once. Each subset gets a newly fitted preprocessor and model. AP is measured only on the existing validation split. The same validation split originally selected the full-data hyperparameters, so this is a descriptive sensitivity analysis, not an independent model-selection study or a semi-supervised experiment. `check_extended.py` recomputes the key counts and confirms the full-data AP matches the original validation results.
