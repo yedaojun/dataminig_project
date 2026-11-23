@@ -1,6 +1,13 @@
 # Group 19 项目交接：A、B、C 已完成内容与 D 工作流
 
-**交接对象：D 工作流负责人。** 本文件以仓库当前的 A/B/C 代码和实际实验结果为准。以下路径均相对仓库根目录。C 的实现目前在本地分支 `group19-c-supervised`，提交 `2adbf27`；**截至本交接文件写作时尚未推送 GitHub**，因此 D 同学需要收到该分支或包含此文件的仓库副本，才能使用 C 的产物。B 的旧文档中“等待 C 交付”的描述属于撰写时状态，本文件更新了这部分状态。
+**交接对象：D 工作流负责人。** 截至 **2026-11-23**，A、B、C 的代码、实验结果及本交接文件均已合并并上传到 [GitHub 仓库的 `main` 分支](https://github.com/yedaojun/dataminig_project/tree/main)。D 同学直接拉取最新 `main` 即可使用。以下路径均相对仓库根目录。B 的早期文档仍有“等待 C 交付”的旧表述；以本文件及 `Group19_C` 的实际产物为准。
+
+| 工作流 | 当前进度 | 主要产出 |
+|---|---|---|
+| A · 数据与复现 | 已完成 | 数据审计、固定划分、公共预处理和特征构造 |
+| B · 异常检测 | 已完成 | Isolation Forest、LOF、融合扩展、测试与误差分析 |
+| C · 监督分类 | 已完成 | 三类模型、加权与特征消融、测试、图表及补强分析 |
+| D · 诊断与鲁棒性 | 待完成 | 五模式诊断、固定误报率和传感器噪声实验 |
 
 ## 一、项目目标与统一口径
 
@@ -19,6 +26,8 @@
 ## 二、A：数据治理与公共接口，已经完成
 
 A 已完成原始数据审计、标签冲突记录、固定索引、公共预处理与特征工程、配置和复现检查。关键文件：
+
+![A 的数据与建模流程图](Group19_A/pipeline.svg)
 
 - `Group19_A/data/raw/ai4i2020.csv`：原始数据，禁止修改字节；`Group19_A/data/splits/indices.npz` 和 `manifest.json`：冻结索引与数据指纹。
 - `Group19_A/pipeline.py`：唯一的公共数据入口，提供 `load_split`、`make_preprocessor` 和 `features`。
@@ -55,6 +64,10 @@ B 已实现 Isolation Forest 与 novelty 模式 LOF。模型拟合只使用训�
 
 主方法对照保留两个 `raw` B 基线；工程组与融合分别标识，不混成同一输入条件。B 的测试逐行预测与指标位于 `Group19_B/results/final_test/<目录哈希>/predictions.csv` 和 `metrics.csv`；`Group19_B/results/frozen/CURRENT` 指向冻结模型。B 的误差分析发现两种原始基线共同漏掉 35/51 个故障；融合主要改善散热故障，对其他模式的覆盖未必改善。D 做模式解释时可以复用其逐行结果，但诊断模型仍须独立训练和评估。
 
+下图是 B 的测试集 Precision–Recall 曲线。故障只有 51/1,500 条，查看 PR 曲线时要同时留意误报数量和故障覆盖。
+
+![B 的测试集 Precision–Recall 曲线](Group19_B/results/final_test/f794ac36dc8d6e14cba353c6f79d10cfa74094617c07e942814de540852b043e/pr.png)
+
 ## 四、C：监督分类与特征分析，已经完成
 
 C 已实现 Logistic Regression、Random Forest、XGBoost，分别比较普通与类别加权训练、原始与工程特征。每个模型 × 权重 × 特征组给 3 个预设候选，共 36 次拟合；在验证集按 AP 选参、按正类 F1 选报警阈值，平局取更高阈值，然后冻结模型再评价测试。C 的 `score` 是正类概率，报警规则 `score >= threshold`。路径：`Group19_C/run.py`、`config.json`、`README.md`、`C_REPORT.md`。
@@ -65,13 +78,27 @@ C 已实现 Logistic Regression、Random Forest、XGBoost，分别比较普通�
 | Random Forest | 0.756 / 0.690 | **0.917 / 0.882** |
 | XGBoost | 0.802 / 0.759 | 0.849 / 0.851 |
 
-类别加权在本实验中没有稳定改善验证 AP 或测试 F1，不能假定“加权一定更好”。工程特征对树模型的提升很大，但这些特征接近合成数据的生成规律，不能推广为真实设备的普遍效果。C 已输出 12 组验证/测试逐行预测、B/C 并列表、同参数配对的特征/权重消融、验证集置换重要性和三张图。重要路径：
+类别加权在本实验中没有稳定改善验证 AP 或测试 F1，不能假定“加权一定更好”。工程特征对树模型的提升很大，但这些特征接近合成数据的生成规律，不能推广为真实设备的普遍效果。C 已输出 12 组验证/测试逐行预测、B/C 并列表、同参数配对的特征/权重消融、验证集置换重要性和五张图。重要路径：
 
 - `Group19_C/results/freeze_manifest.json`、`frozen_models.joblib`：冻结参数、阈值、数据和代码指纹、已拟合模型。跨 Python / scikit-learn / XGBoost 版本加载 joblib 可能不兼容；必要时按 `Group19_C/README.md` 重训。
 - `Group19_C/results/test_predictions.csv`、`test_metrics.csv`：12 组测试预测与指标；`bc_comparison.csv`：B/C 统一对照。
 - `Group19_C/results/permutation_importance.csv`、`matched_feature_ablation.csv`：特征分析与同参数消融。
 - C 的补强结果还包括 `paired_bootstrap.csv`（测试 AP 的配对重采样区间）、`alarm_budgets.csv`（验证集定阈值后在测试集的报警代价）、`label_efficiency_summary.csv`（减少有标签训练行时的验证 AP）。这是**二分类**补充分析；D 的五种模式诊断和噪声实验仍需独立完成。
 - `python -m Group19_C.check_results`：核对 C 的分数、阈值、四格计数、标签及 B/C 行号。当前已通过。
+
+**C 的图表速览。** 第一张显示三类模型在原始与工程输入下的测试 AP；第二张是工程特征随机森林的验证集置换重要性。图中重要性表示打乱单个输入后 AP 的下降，不代表因果效应。
+
+![C 的普通与加权模型测试 AP 对比](Group19_C/results/model_comparison.png)
+
+![C 的工程特征随机森林置换重要性](Group19_C/results/feature_importance.png)
+
+第三张给出主要监督模型的测试 PR/ROC 曲线；后两张展示验证集定阈值后的测试报警负担，以及减少有标签训练行时的验证 AP。报警图上的 1%、2%、5% 是**验证集目标**，测试集实际误报率可以高于目标；训练行数图的误差线是五次抽样的标准差。
+
+![C 的测试集 PR 与 ROC 曲线](Group19_C/results/pr_roc.png)
+
+![C 在不同报警预算下的故障召回与实际误报率](Group19_C/results/alarm_budgets.png)
+
+![C 在不同有标签训练行数下的验证 AP](Group19_C/results/label_efficiency.png)
 
 ## 五、D 的待完成工作与推荐步骤
 
