@@ -1,0 +1,46 @@
+candidate,model,feature_set,weighting,feature,ap_drop_mean,ap_drop_std
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Air temperature [K],0.23280940407403009,0.021435994201131767
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Process temperature [K],0.17570957689776745,0.03010874422050215
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Rotational speed [rpm],0.21413722841301616,0.003190547038640573
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Torque [Nm],0.31748859988342293,0.011867000282612178
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Tool wear [min],0.09644011147773103,0.020931863627723642
+raw_LogisticRegression_weighted_0,LogisticRegression,raw,weighted,Type,-0.013148428430120948,0.006789104325126203
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Air temperature [K],0.3360382115825562,0.035021056297160555
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Process temperature [K],0.06198113381885384,0.017406001721753307
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Rotational speed [rpm],0.41865679260853134,0.006245953299498852
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Torque [Nm],0.3879906268868331,0.007497534238027295
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Tool wear [min],0.21818669922495695,0.01178441304686073
+raw_RandomForest_unweighted_1,RandomForest,raw,unweighted,Type,0.0012470151319737093,0.003518872062360817
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Air temperature [K],0.4319206333807628,0.013611268848999832
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Process temperature [K],0.19376215723689919,0.018283846866836817
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Rotational speed [rpm],0.37707956197290254,0.009561700023314957
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Torque [Nm],0.5410339583488871,0.006284780887363136
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Tool wear [min],0.33449900159096674,0.018538932997097152
+raw_XGBoost_unweighted_1,XGBoost,raw,unweighted,Type,0.0004244371240000137,0.005615060465392169
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Air temperature [K],-0.0030336375519161942,0.011222981081858511
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Process temperature [K],0.0034259647416901573,0.005276597845494622
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Rotational speed [rpm],0.229064128001763,0.0032239503511769085
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Torque [Nm],0.33522113915969287,0.013051210004415125
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Tool wear [min],0.15612887912796225,0.03166095166996824
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,Type,-0.010453229718239513,0.0042096034474213805
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,temperature_difference,0.030926475511132312,0.028150881272909687
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,mechanical_power,0.10017308832383527,0.025148716528115456
+engineered_LogisticRegression_weighted_0,LogisticRegression,engineered,weighted,wear_load,0.008570451695908069,0.005004281164187716
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Air temperature [K],0.010812647079112633,0.002822016449721516
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Process temperature [K],-0.002220425646440686,0.006898757968637933
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Rotational speed [rpm],0.3877047411601817,0.016359181107138104
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Torque [Nm],0.00988157176795886,0.0005377934539461985
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Tool wear [min],0.02586910791702916,0.00613998901434884
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,Type,0.03508837885842734,0.0025776175268076833
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,temperature_difference,0.25314275118370405,0.015900162879876188
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,mechanical_power,0.12795016618547891,0.0034221269841158432
+engineered_RandomForest_unweighted_1,RandomForest,engineered,unweighted,wear_load,0.1607083047925172,0.018903581131894734
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Air temperature [K],0.027740371704754,0.003743638832229932
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Process temperature [K],-0.005124296356305476,0.005813367636749528
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Rotational speed [rpm],0.4914413663149846,0.025665580223123107
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Torque [Nm],-0.009636779445265123,0.007113287440397317
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Tool wear [min],0.08468523160264445,0.011120436448908073
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,Type,0.00982757173900469,0.003370565534379645
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,temperature_difference,0.37667376171014183,0.02417149685876399
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,mechanical_power,0.09074964547039828,0.013634485834953677
+engineered_XGBoost_unweighted_1,XGBoost,engineered,unweighted,wear_load,0.12329199573533693,0.008176456458175257

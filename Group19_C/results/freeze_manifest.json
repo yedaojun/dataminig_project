@@ -1,0 +1,111 @@
+{
+  "status": "frozen_before_test",
+  "data_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "indices_sha256": "b8a7819fea7d2cadb1c5d86f331a18845a4e2ebb5dd0a6fe46d5d9ff52738d9b",
+  "config_sha256": "513ee2cfc350a489051aae147ce04ffffdc494b25a7505e04403a84a8c2860f6",
+  "code_sha256": "72c9bfbfd7aa3883fbd42a6f41bf34f3e0f3329bfc2416415c675118b0a0ac3c",
+  "models_sha256": "6792d778fb0a212b8e36c8d276c4b16ac8178cf4bf100168365fc875cc21d432",
+  "seed": 42,
+  "class_ratio": 28.535864978902953,
+  "sklearn_version": "1.7.1",
+  "threshold_rule": "max_validation_f1_ties_highest_threshold_score_greater_equal",
+  "score_direction": "higher_means_failure",
+  "selected": [
+    {
+      "candidate": "raw_LogisticRegression_unweighted_2",
+      "model": "LogisticRegression",
+      "feature_set": "raw",
+      "weighting": "unweighted",
+      "params": "{\"C\": 10.0}",
+      "threshold": 0.3013178810212398
+    },
+    {
+      "candidate": "raw_LogisticRegression_weighted_0",
+      "model": "LogisticRegression",
+      "feature_set": "raw",
+      "weighting": "weighted",
+      "params": "{\"C\": 0.1}",
+      "threshold": 0.8887831189120585
+    },
+    {
+      "candidate": "raw_RandomForest_unweighted_1",
+      "model": "RandomForest",
+      "feature_set": "raw",
+      "weighting": "unweighted",
+      "params": "{\"max_depth\": 12}",
+      "threshold": 0.2377000970321366
+    },
+    {
+      "candidate": "raw_RandomForest_weighted_2",
+      "model": "RandomForest",
+      "feature_set": "raw",
+      "weighting": "weighted",
+      "params": "{\"max_depth\": null}",
+      "threshold": 0.34081233929334825
+    },
+    {
+      "candidate": "raw_XGBoost_unweighted_1",
+      "model": "XGBoost",
+      "feature_set": "raw",
+      "weighting": "unweighted",
+      "params": "{\"max_depth\": 4}",
+      "threshold": 0.23244355618953705
+    },
+    {
+      "candidate": "raw_XGBoost_weighted_2",
+      "model": "XGBoost",
+      "feature_set": "raw",
+      "weighting": "weighted",
+      "params": "{\"max_depth\": 6}",
+      "threshold": 0.7985182404518127
+    },
+    {
+      "candidate": "engineered_LogisticRegression_unweighted_1",
+      "model": "LogisticRegression",
+      "feature_set": "engineered",
+      "weighting": "unweighted",
+      "params": "{\"C\": 1.0}",
+      "threshold": 0.2219651837376993
+    },
+    {
+      "candidate": "engineered_LogisticRegression_weighted_0",
+      "model": "LogisticRegression",
+      "feature_set": "engineered",
+      "weighting": "weighted",
+      "params": "{\"C\": 0.1}",
+      "threshold": 0.8536429663840723
+    },
+    {
+      "candidate": "engineered_RandomForest_unweighted_1",
+      "model": "RandomForest",
+      "feature_set": "engineered",
+      "weighting": "unweighted",
+      "params": "{\"max_depth\": 12}",
+      "threshold": 0.4946420970683882
+    },
+    {
+      "candidate": "engineered_RandomForest_weighted_1",
+      "model": "RandomForest",
+      "feature_set": "engineered",
+      "weighting": "weighted",
+      "params": "{\"max_depth\": 12}",
+      "threshold": 0.3424359570012681
+    },
+    {
+      "candidate": "engineered_XGBoost_unweighted_1",
+      "model": "XGBoost",
+      "feature_set": "engineered",
+      "weighting": "unweighted",
+      "params": "{\"max_depth\": 4}",
+      "threshold": 0.2548465430736542
+    },
+    {
+      "candidate": "engineered_XGBoost_weighted_2",
+      "model": "XGBoost",
+      "feature_set": "engineered",
+      "weighting": "weighted",
+      "params": "{\"max_depth\": 6}",
+      "threshold": 0.9278991222381592
+    }
+  ]
+}

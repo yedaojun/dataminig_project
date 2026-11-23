@@ -1,0 +1,12 @@
+{
+  "seed": 42,
+  "primary_metric": "average_precision",
+  "threshold_rule": "max_validation_f1_ties_highest_threshold_score_greater_equal",
+  "feature_sets": ["raw", "engineered"],
+  "weighting": ["unweighted", "weighted"],
+  "candidates": {
+    "LogisticRegression": [{"C": 0.1}, {"C": 1.0}, {"C": 10.0}],
+    "RandomForest": [{"max_depth": 6}, {"max_depth": 12}, {"max_depth": null}],
+    "XGBoost": [{"max_depth": 2}, {"max_depth": 4}, {"max_depth": 6}]
+  }
+}

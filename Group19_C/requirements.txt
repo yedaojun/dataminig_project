@@ -1,0 +1,3 @@
+# Install Group19_A/requirements.txt first for the shared pipeline.
+xgboost==3.4.1
+matplotlib>=3.8
