@@ -16,7 +16,17 @@ For D, run from the repository root:
 python -m Group19_D.run tune
 python -m Group19_D.run evaluate-test
 python -m Group19_D.noise
+python -m Group19_D.extended_analysis
+python -m Group19_D.oracle_analysis
 python -m Group19_D.check_results
+```
+
+The corruption extension requires Group C's XGBoost dependency and is run in a
+separate Conda environment:
+
+```shell
+conda env create -f Group19_D/environment_corruption.yml
+conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
 ```
 
 The report-ready interpretation and limitations are in

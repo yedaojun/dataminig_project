@@ -1,0 +1,26 @@
+{
+  "bootstrap_repeats": 2000,
+  "bootstrap_seed": 20261124,
+  "bootstrap_strata": [
+    "Machine failure == 0",
+    "Machine failure == 1"
+  ],
+  "interval": "2.5th and 97.5th percentiles",
+  "rnf_interpretation": "n=2; report intervals but do not rank",
+  "macro_ap_metrics": [
+    "macro_ap_all_five",
+    "macro_ap_excluding_rnf",
+    "support_weighted_ap"
+  ],
+  "threshold_comparison": [
+    "rank_budget",
+    "empirical_quantile_tie_adjusted",
+    "fixed_probability_0_05"
+  ],
+  "current_threshold_equals_quantile_adjusted": false,
+  "source_hashes": {
+    "validation_predictions": "90f6d882953d63964690313d0d4d326c4d99440bc30fe097f4f1d1a7f37ad8a4",
+    "test_predictions": "7cf1c964eb3959e0e5990e77f00424934d45224cef30f65408f1ceaa7fc7cf17",
+    "freeze_manifest": "190fbfa9f0629643dcc3ccab314ab4c509af756544f68919db3a781119310da3"
+  }
+}

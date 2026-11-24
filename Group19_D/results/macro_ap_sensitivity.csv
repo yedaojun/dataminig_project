@@ -1,0 +1,9 @@
+feature_set,metric,point,ci_low,ci_high,valid_repeats,interpretation
+raw,macro_ap_all_five,0.54252849221926724,0.47758254414586798,0.6212356711184589,1698,includes_sparse_rnf
+raw,macro_ap_excluding_rnf,0.6744225200359889,0.59344410267202918,0.77026552741735188,1999,excluding_rnf_sensitivity
+raw,support_weighted_ap_all_five,0.71482784687238643,0.61304526711917373,0.81940887949070529,1698,includes_sparse_rnf
+raw,support_weighted_ap_excluding_rnf,0.74074916042497929,0.64410701903446721,0.85051610426377022,1999,excluding_rnf_sensitivity
+engineered,macro_ap_all_five,0.62343256670880987,0.60789875455481268,0.67742769443296758,1698,includes_sparse_rnf
+engineered,macro_ap_excluding_rnf,0.76776040535570933,0.75651325859163787,0.80878297535317201,1999,excluding_rnf_sensitivity
+engineered,support_weighted_ap_all_five,0.8332245606361629,0.75132941569951839,0.91749431835798934,1698,includes_sparse_rnf
+engineered,support_weighted_ap_excluding_rnf,0.86237653650708712,0.78564391101195663,0.94728491057128172,1999,excluding_rnf_sensitivity

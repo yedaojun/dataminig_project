@@ -391,6 +391,272 @@ def check_noise(config: dict) -> None:
         assert np.isclose(row.f1_mean, group.f1.mean())
 
 
+def check_extended(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "extended_analysis_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["bootstrap_repeats"] == 2000
+    detail = pd.read_csv(OUT / "bootstrap_replicates.csv", float_precision="round_trip")
+    intervals = pd.read_csv(OUT / "bootstrap_intervals.csv", float_precision="round_trip")
+    sensitivity = pd.read_csv(OUT / "macro_ap_sensitivity.csv", float_precision="round_trip")
+    threshold_detail = pd.read_csv(
+        OUT / "threshold_calibration.csv",
+        float_precision="round_trip",
+    )
+    threshold_anchors = pd.read_csv(
+        OUT / "threshold_anchors.csv",
+        float_precision="round_trip",
+    )
+    threshold_system = pd.read_csv(
+        OUT / "threshold_system_summary.csv",
+        float_precision="round_trip",
+    )
+    assert len(detail) == 2000 * len(config["feature_sets"])
+    for feature_set in config["feature_sets"]:
+        frame = detail[detail.feature_set == feature_set]
+        assert len(frame) == 2000
+        assert frame.repeat.nunique() == 2000
+    assert len(intervals) == 50
+    assert len(sensitivity) == 8
+    assert len(threshold_anchors) == 10
+    assert len(threshold_detail) == 10 * 3 * 2
+    assert len(threshold_system) == len(config["feature_sets"]) * 3 * 2
+    assert (intervals.ci_low <= intervals.point + 1e-15).all()
+    assert (intervals.point <= intervals.ci_high + 1e-15).all()
+    for feature_set in config["feature_sets"]:
+        mode_ap = intervals[
+            (intervals.feature_set == feature_set)
+            & (intervals.scope == "mode")
+            & (intervals.metric == "average_precision")
+        ]
+        assert len(mode_ap) == 5
+        rnf = mode_ap[mode_ap["mode"] == "RNF"].iloc[0]
+        assert rnf.interpretation == "insufficient_support"
+        assert rnf.support == 2
+        assert rnf.valid_repeats < 2000
+        aggregates = intervals[
+            (intervals.feature_set == feature_set)
+            & (intervals.scope == "aggregate")
+        ].set_index("metric")
+        assert set(aggregates.index) == {
+            "macro_ap_all_five",
+            "macro_ap_excluding_rnf",
+            "support_weighted_ap_all_five",
+            "support_weighted_ap_excluding_rnf",
+            "any_mode_normal_fpr",
+        }
+    test_metrics = pd.read_csv(
+        OUT / "test_metrics.csv",
+        float_precision="round_trip",
+    )
+    test_aggregates = pd.read_csv(
+        OUT / "test_aggregates.csv",
+        float_precision="round_trip",
+    )
+    for feature_set in config["feature_sets"]:
+        frame = test_metrics[test_metrics.feature_set == feature_set]
+        all_ap = float(frame.average_precision.mean())
+        without_rnf = float(
+            frame[frame["mode"] != "RNF"].average_precision.mean()
+        )
+        supports = frame.set_index("mode").support
+        weighted = float(np.average(
+            frame.average_precision,
+            weights=frame.support,
+        ))
+        intervals_frame = intervals[
+            (intervals.feature_set == feature_set)
+            & (intervals.scope == "aggregate")
+        ].set_index("metric")
+        assert np.isclose(intervals_frame.loc["macro_ap_all_five", "point"], all_ap)
+        assert np.isclose(
+            intervals_frame.loc["macro_ap_excluding_rnf", "point"],
+            without_rnf,
+        )
+        assert np.isclose(
+            intervals_frame.loc["support_weighted_ap_all_five", "point"],
+            weighted,
+        )
+        aggregate_reference = test_aggregates[
+            test_aggregates.feature_set == feature_set
+        ].iloc[0]
+        assert np.isclose(
+            intervals_frame.loc["any_mode_normal_fpr", "point"],
+            aggregate_reference.any_mode_normal_fpr,
+        )
+
+    freeze = json.loads((OUT / "freeze_manifest.json").read_text(encoding="utf-8"))
+    for row in threshold_anchors.itertuples():
+        frozen_threshold = freeze["selected"][row.feature_set]["thresholds"][row.mode]
+        assert np.isclose(row.current_threshold, frozen_threshold, rtol=0, atol=0)
+    for feature_set in config["feature_sets"]:
+        validation_rank = threshold_detail[
+            (threshold_detail.feature_set == feature_set)
+            & (threshold_detail.partition == "validation")
+            & (threshold_detail.method == "rank_budget")
+        ]
+        assert (validation_rank.normal_fp <= 72).all()
+    engineered_rank = threshold_system[
+        (threshold_system.feature_set == "engineered")
+        & (threshold_system.partition == "test")
+        & (threshold_system.method == "rank_budget")
+    ].iloc[0]
+    assert np.isclose(engineered_rank.any_mode_normal_fpr, 228 / 1449)
+
+
+def check_oracle_analysis(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "oracle_analysis_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["deterministic_rules"] == ["HDF", "PWF", "OSF"]
+    assert manifest["stochastic_or_unavailable"] == ["TWF", "RNF"]
+    rules_path = OUT.parent / manifest["rules_file"]
+    assert rules_path.is_file()
+    oracle = pd.read_csv(OUT / "oracle_metrics.csv", float_precision="round_trip")
+    assert len(oracle) == 3 * (len(MODES) + 1)
+    for partition in ("train", "validation", "test"):
+        frame = oracle[oracle.partition == partition]
+        assert set(frame["mode"]) == set(MODES + ["TOTAL_FAILURE"])
+        deterministic = frame[frame["mode"].isin(["HDF", "PWF", "OSF"])]
+        assert len(deterministic) == 3
+        assert (deterministic.available == True).all()
+        assert (deterministic.deterministic_label == True).all()
+        assert np.isclose(deterministic.exact_match_rate, 1.0).all()
+        assert np.isclose(deterministic.average_precision, 1.0).all()
+        assert np.isclose(deterministic.f1, 1.0).all()
+        rnf = frame[frame["mode"] == "RNF"].iloc[0]
+        assert not bool(rnf.available)
+        assert np.isnan(rnf.average_precision)
+    comparison = pd.read_csv(OUT / "oracle_vs_d.csv", float_precision="round_trip")
+    assert len(comparison) == len(config["feature_sets"]) * len(MODES)
+    assert set(comparison.oracle_interpretation) == {
+        "exact_generator_rule",
+        "stochastic_exposure_window",
+        "no_deterministic_rule",
+    }
+
+    importance = pd.read_csv(
+        OUT / "permutation_importance_by_mode.csv",
+        float_precision="round_trip",
+    )
+    summary = pd.read_csv(
+        OUT / "permutation_importance_summary.csv",
+        float_precision="round_trip",
+    )
+    expected = (6 + 9) * len(MODES)
+    assert len(importance) == expected
+    assert len(summary) == expected
+    assert (importance.repeats == 5).all()
+    for feature_set in config["feature_sets"]:
+        for mode in MODES:
+            frame = summary[
+                (summary.feature_set == feature_set)
+                & (summary["mode"] == mode)
+            ]
+            assert len(frame) == (9 if feature_set == "engineered" else 6)
+            assert frame.rank_within_mode.min() == 1
+            assert frame.rank_within_mode.max() == len(frame)
+    engineered = summary[summary.feature_set == "engineered"]
+    expected_top = {
+        "HDF": {"Rotational speed [rpm]", "temperature_difference"},
+        "PWF": {"mechanical_power"},
+        "OSF": {"wear_load"},
+    }
+    for mode, features in expected_top.items():
+        top_two = set(
+            engineered[engineered["mode"] == mode]
+            .nsmallest(2, "rank_within_mode")
+            .feature
+        )
+        assert features.intersection(top_two)
+
+
+def check_corruption_analysis(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "corruption_analysis_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["environment"]["xgboost"] == "3.4.1"
+    assert manifest["protocol"]["no_refit_or_retune"] is True
+    conditions = [item["name"] for item in manifest["protocol"]["conditions"]]
+    expected = [
+        "clean",
+        "gaussian_0.1sd",
+        "gaussian_0.2sd",
+        "gaussian_0.5sd",
+        "constant_bias_1sd",
+        "missing_10pct_median",
+    ]
+    assert conditions == expected
+    mode_detail = pd.read_csv(
+        OUT / "corruption_mode_repeats.csv",
+        float_precision="round_trip",
+    )
+    binary_detail = pd.read_csv(
+        OUT / "corruption_binary_repeats.csv",
+        float_precision="round_trip",
+    )
+    aggregate_detail = pd.read_csv(
+        OUT / "corruption_d_aggregate_repeats.csv",
+        float_precision="round_trip",
+    )
+    mode_summary = pd.read_csv(
+        OUT / "corruption_mode_summary.csv",
+        float_precision="round_trip",
+    )
+    binary_summary = pd.read_csv(
+        OUT / "corruption_binary_summary.csv",
+        float_precision="round_trip",
+    )
+    aggregate_summary = pd.read_csv(
+        OUT / "corruption_d_aggregate_summary.csv",
+        float_precision="round_trip",
+    )
+    run_count = 1 + 5 + 5 + 5 + 1 + 5
+    assert len(mode_detail) == run_count * len(config["feature_sets"]) * len(MODES)
+    assert len(binary_detail) == run_count * 2
+    assert len(aggregate_detail) == run_count * len(config["feature_sets"])
+    assert len(mode_summary) == 6 * len(config["feature_sets"]) * len(MODES)
+    assert len(binary_summary) == 6 * 2
+    assert len(aggregate_summary) == 6 * len(config["feature_sets"])
+    assert set(mode_detail.source) == {"D"}
+    assert set(binary_detail.source) == {"B", "C"}
+    assert (binary_detail[binary_detail.source == "C"].candidate ==
+            "engineered_RandomForest_unweighted_1").all()
+    clean = mode_detail[mode_detail.condition == "clean"]
+    assert clean.seed.nunique() == 1
+    missing = mode_detail[mode_detail.condition == "missing_10pct_median"]
+    assert (missing.missing_cells > 0).all()
+    assert missing.missing_cells.between(500, 1000).all()
+    bias = mode_detail[mode_detail.condition == "constant_bias_1sd"]
+    assert (bias.missing_cells == 0).all()
+    assert mode_summary.repeats.max() == 5
+    assert aggregate_summary.repeats.max() == 5
+    for source in ("B", "C"):
+        row = binary_summary[
+            (binary_summary.condition == "clean")
+            & (binary_summary.source == source)
+        ]
+        assert len(row) == 1
+        assert np.isfinite(row.average_precision_mean.iloc[0])
+    engineered_clean = aggregate_summary[
+        (aggregate_summary.condition == "clean")
+        & (aggregate_summary.feature_set == "engineered")
+    ].iloc[0]
+    reference = pd.read_csv(
+        OUT / "test_aggregates.csv",
+        float_precision="round_trip",
+    )
+    reference = reference[reference.feature_set == "engineered"].iloc[0]
+    assert np.isclose(
+        engineered_clean.macro_average_precision_mean,
+        reference.macro_average_precision,
+    )
+    assert np.isclose(
+        engineered_clean.any_mode_normal_fpr_mean,
+        reference.any_mode_normal_fpr,
+    )
+
+
 def check_artifacts(manifest: dict) -> None:
     assert manifest["models_sha256"] == hashlib_sha256(MODEL_FILE)
     assert manifest["config_sha256"] == hashlib_sha256(CONFIG)
@@ -419,6 +685,33 @@ def check_artifacts(manifest: dict) -> None:
         "binary_noise_repeats.csv",
         "binary_noise_summary.csv",
         "binary_noise_robustness.png",
+        "bootstrap_replicates.csv",
+        "bootstrap_intervals.csv",
+        "bootstrap_intervals.png",
+        "macro_ap_sensitivity.csv",
+        "threshold_anchors.csv",
+        "threshold_calibration.csv",
+        "threshold_calibration.png",
+        "threshold_system_summary.csv",
+        "extended_analysis_manifest.json",
+        "oracle_analysis_manifest.json",
+        "oracle_metrics.csv",
+        "oracle_predictions.csv",
+        "oracle_vs_d.csv",
+        "oracle_vs_d.png",
+        "permutation_importance_by_mode.csv",
+        "permutation_importance_summary.csv",
+        "mode_feature_importance_heatmap.png",
+        "corruption_analysis_manifest.json",
+        "corruption_mode_repeats.csv",
+        "corruption_mode_summary.csv",
+        "corruption_binary_repeats.csv",
+        "corruption_binary_summary.csv",
+        "corruption_d_aggregate_repeats.csv",
+        "corruption_d_aggregate_summary.csv",
+        "corruption_binary_comparison.png",
+        "corruption_d_comparison.png",
+        "corruption_mode_heatmap.png",
     ]
     for name in required:
         path = OUT / name
@@ -441,10 +734,15 @@ def main() -> None:
     check_aggregates()
     check_cases_and_support()
     check_noise(config)
+    check_extended(config)
+    check_oracle_analysis(config)
+    check_corruption_analysis(config)
     check_artifacts(manifest)
     print(
         "PASS: selection, thresholds, row labels, metrics, alarms, FPR denominators, "
-        "aggregates, noise repeats, and artifacts verified"
+        "aggregates, noise repeats, bootstrap intervals, RNF sensitivity, "
+        "threshold calibration, rule oracle, permutation importance, "
+        "Gaussian/bias/missing corruption comparison, and artifacts verified"
     )
 
 

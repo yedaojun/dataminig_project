@@ -1,0 +1,26 @@
+{
+  "source": "AI4I generator rules; no rule fitted on data",
+  "rules_file": "oracle_rules.json",
+  "rules_sha256": "33236cede4288841c290aba14b26704a421e5f7b63a709d53978e8cc3e623979",
+  "importance_partition": "validation",
+  "importance_repeats": 5,
+  "importance_seed": 20261124,
+  "deterministic_rules": [
+    "HDF",
+    "PWF",
+    "OSF"
+  ],
+  "stochastic_or_unavailable": [
+    "TWF",
+    "RNF"
+  ],
+  "outputs": {
+    "oracle_metrics": "oracle_metrics.csv",
+    "oracle_predictions": "oracle_predictions.csv",
+    "oracle_vs_d": "oracle_vs_d.csv",
+    "importance": "permutation_importance_by_mode.csv",
+    "importance_summary": "permutation_importance_summary.csv",
+    "oracle_figure": "oracle_vs_d.png",
+    "importance_figure": "mode_feature_importance_heatmap.png"
+  }
+}

@@ -17,6 +17,8 @@ recorded run uses Python 3.12.7, NumPy 1.26.4, pandas 2.2.2, scikit-learn
 python -m Group19_D.run tune
 python -m Group19_D.run evaluate-test
 python -m Group19_D.noise
+python -m Group19_D.extended_analysis
+python -m Group19_D.oracle_analysis
 python -m Group19_D.check_results
 ```
 
@@ -25,6 +27,15 @@ Run `tune` and inspect `results/validation_metrics.csv` before
 source, and serialized-model hashes before reading test. It never refits or
 retunes. The noise script performs a second hash check and reuses every frozen
 preprocessor, model, and threshold.
+
+The corruption extension loads Group19_C's frozen models, including XGBoost.
+Create and run it in a separate environment so the core project environment is
+not changed:
+
+```shell
+conda env create -f Group19_D/environment_corruption.yml
+conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
+```
 
 ## Diagnostic protocol
 
@@ -85,6 +96,19 @@ That selection is based on validation results alone.
 | `results/noise_aggregate_repeats.csv`, `noise_aggregate_summary.csv` | Macro AP/F1 and any-mode normal FPR across the five repeats |
 | `results/noise_robustness.png`, `noise_fpr.png` | D AP/F1 and realized normal-FPR robustness |
 | `results/binary_noise_repeats.csv`, `binary_noise_summary.csv`, `binary_noise_robustness.png` | B raw LOF robustness supplement |
+| `results/bootstrap_replicates.csv`, `bootstrap_intervals.csv` | 2,000 stratified test-row bootstrap replicates and 95% percentile intervals |
+| `results/macro_ap_sensitivity.csv` | Macro AP including/excluding RNF and support-weighted sensitivity summaries |
+| `results/threshold_anchors.csv`, `threshold_calibration.csv` | Rank-budget, empirical-quantile, and fixed-0.05 threshold comparison |
+| `results/threshold_system_summary.csv` | Macro/micro F1 and any-mode FPR under each threshold method |
+| `results/bootstrap_intervals.png`, `threshold_calibration.png` | Presentation figures for uncertainty and threshold sensitivity |
+| `Group19_D/oracle_rules.json`, `results/oracle_metrics.csv` | Fixed AI4I generator rules and rule-oracle metrics on all partitions |
+| `results/oracle_vs_d.csv`, `oracle_vs_d.png` | Oracle-vs-model test comparison with stochastic/unavailable modes identified |
+| `results/permutation_importance_by_mode.csv` | Validation-only five-repeat permutation AP drop for every mode and input feature |
+| `results/mode_feature_importance_heatmap.png` | Per-mode feature-importance heatmaps for raw and engineered inputs |
+| `results/corruption_mode_repeats.csv`, `corruption_mode_summary.csv` | D per-mode results under clean, Gaussian, +1-SD bias, and 10% missing corruption |
+| `results/corruption_binary_repeats.csv`, `corruption_binary_summary.csv` | Frozen C engineered RF and B raw LOF binary comparisons under every corruption |
+| `results/corruption_d_aggregate_repeats.csv`, `corruption_d_aggregate_summary.csv` | D macro AP/F1 and any-mode FPR by corruption condition |
+| `results/corruption_*_comparison.png`, `corruption_mode_heatmap.png` | Presentation figures for binary and five-mode corruption sensitivity |
 
 `test_predictions.csv` uses:
 

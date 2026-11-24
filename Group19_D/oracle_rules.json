@@ -1,0 +1,38 @@
+{
+  "source": "UCI AI4I 2020 Predictive Maintenance Dataset generator documentation",
+  "temperature_unit": "K",
+  "power_definition": "Torque [Nm] * Rotational speed [rpm] * 2*pi/60",
+  "overstrain_definition": "Tool wear [min] * Torque [Nm]",
+  "modes": {
+    "TWF": {
+      "rule": "200 <= Tool wear [min] <= 240",
+      "deterministic_label": false,
+      "interpretation": "Tool-wear exposure interval; the generator injects failures stochastically inside the interval."
+    },
+    "HDF": {
+      "rule": "Process temperature - Air temperature < 8.6 AND Rotational speed < 1380",
+      "deterministic_label": true,
+      "interpretation": "Exact documented heat-dissipation rule."
+    },
+    "PWF": {
+      "rule": "mechanical power < 3500 W OR mechanical power > 9000 W",
+      "deterministic_label": true,
+      "interpretation": "Exact documented power rule."
+    },
+    "OSF": {
+      "rule": "Tool wear * Torque > Type threshold",
+      "thresholds": {
+        "L": 11000,
+        "M": 12000,
+        "H": 13000
+      },
+      "deterministic_label": true,
+      "interpretation": "Exact documented overstrain rule."
+    },
+    "RNF": {
+      "rule": null,
+      "deterministic_label": false,
+      "interpretation": "Random failure with no feature-based deterministic rule."
+    }
+  }
+}

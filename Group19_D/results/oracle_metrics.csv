@@ -1,0 +1,19 @@
+partition,source,mode,available,deterministic_label,rule,average_precision,precision,recall,f1,tp,fp,tn,fn,support,normal_fp,normal_denominator,normal_fpr,exact_match_rate
+train,rule_oracle,TWF,True,False,200 <= Tool wear [min] <= 240,0.057394338748582296,0.059040590405904057,0.96969696969696972,0.11130434782608696,32,510,6457,1,33,459,6763,0.067869288777169898,0.92700000000000005
+train,rule_oracle,HDF,True,True,Process temperature - Air temperature < 8.6 AND Rotational speed < 1380,1,1,1,1,73,0,6927,0,73,0,6763,0,1
+train,rule_oracle,PWF,True,True,mechanical power < 3500 W OR mechanical power > 9000 W,1,1,1,1,72,0,6928,0,72,0,6763,0,1
+train,rule_oracle,OSF,True,True,Tool wear * Torque > Type threshold,1,1,1,1,71,0,6929,0,71,0,6763,0,1
+train,rule_oracle,RNF,False,False,,,0,0,0,0,0,6987,13,13,0,6763,0,0.99814285714285711
+train,rule_oracle,TOTAL_FAILURE,True,False,TWF-or-HDF-or-PWF-or-OSF documented rules; RNF unavailable,0.32495754870080162,0.33381712626995647,0.97046413502109707,0.49676025917926564,230,459,6304,7,237,459,6763,0.067869288777169898,0.93342857142857139
+validation,rule_oracle,TWF,True,False,200 <= Tool wear [min] <= 240,0.045045045045045043,0.045045045045045043,1,0.086206896551724144,5,106,1389,0,5,97,1449,0.06694271911663216,0.92933333333333334
+validation,rule_oracle,HDF,True,True,Process temperature - Air temperature < 8.6 AND Rotational speed < 1380,1,1,1,1,24,0,1476,0,24,0,1449,0,1
+validation,rule_oracle,PWF,True,True,mechanical power < 3500 W OR mechanical power > 9000 W,1,1,1,1,10,0,1490,0,10,0,1449,0,1
+validation,rule_oracle,OSF,True,True,Tool wear * Torque > Type threshold,1,1,1,1,12,0,1488,0,12,0,1449,0,1
+validation,rule_oracle,RNF,False,False,,,0,0,0,0,0,1496,4,4,0,1449,0,0.99733333333333329
+validation,rule_oracle,TOTAL_FAILURE,True,False,TWF-or-HDF-or-PWF-or-OSF documented rules; RNF unavailable,0.33413338668800852,0.3401360544217687,0.98039215686274506,0.50505050505050508,50,97,1352,1,51,97,1449,0.06694271911663216,0.93466666666666665
+test,rule_oracle,TWF,True,False,200 <= Tool wear [min] <= 240,0.034180048661800487,0.043795620437956206,0.75,0.082758620689655171,6,131,1361,2,8,115,1449,0.079365079365079361,0.91133333333333333
+test,rule_oracle,HDF,True,True,Process temperature - Air temperature < 8.6 AND Rotational speed < 1380,1,1,1,1,18,0,1482,0,18,0,1449,0,1
+test,rule_oracle,PWF,True,True,mechanical power < 3500 W OR mechanical power > 9000 W,1,1,1,1,13,0,1487,0,13,0,1449,0,1
+test,rule_oracle,OSF,True,True,Tool wear * Torque > Type threshold,1,1,1,1,15,0,1485,0,15,0,1449,0,1
+test,rule_oracle,RNF,False,False,,,0,0,0,0,0,1498,2,2,0,1449,0,0.9986666666666667
+test,rule_oracle,TOTAL_FAILURE,True,False,TWF-or-HDF-or-PWF-or-OSF documented rules; RNF unavailable,0.28839693926351029,0.29878048780487804,0.96078431372549022,0.45581395348837211,49,115,1334,2,51,115,1449,0.079365079365079361,0.92200000000000004

@@ -1,0 +1,100 @@
+{
+  "protocol": {
+    "conditions": [
+      {
+        "name": "clean",
+        "family": "clean",
+        "severity": 0.0,
+        "seeds": [
+          101
+        ]
+      },
+      {
+        "name": "gaussian_0.1sd",
+        "family": "gaussian",
+        "severity": 0.1,
+        "seeds": [
+          101,
+          102,
+          103,
+          104,
+          105
+        ]
+      },
+      {
+        "name": "gaussian_0.2sd",
+        "family": "gaussian",
+        "severity": 0.2,
+        "seeds": [
+          101,
+          102,
+          103,
+          104,
+          105
+        ]
+      },
+      {
+        "name": "gaussian_0.5sd",
+        "family": "gaussian",
+        "severity": 0.5,
+        "seeds": [
+          101,
+          102,
+          103,
+          104,
+          105
+        ]
+      },
+      {
+        "name": "constant_bias_1sd",
+        "family": "constant_bias",
+        "severity": 1.0,
+        "seeds": [
+          101
+        ]
+      },
+      {
+        "name": "missing_10pct_median",
+        "family": "random_missing",
+        "severity": 0.1,
+        "seeds": [
+          101,
+          102,
+          103,
+          104,
+          105
+        ]
+      }
+    ],
+    "missing_handling": "Independent 10% cell missingness per numeric sensor; training medians used before recomputing engineered features.",
+    "no_refit_or_retune": true
+  },
+  "models": {
+    "D": "frozen raw and engineered OVR Random Forest",
+    "C": {
+      "candidate": "engineered_RandomForest_unweighted_1",
+      "model": "RandomForest",
+      "feature_set": "engineered"
+    },
+    "B": {
+      "candidate": "LocalOutlierFactor",
+      "model": "LocalOutlierFactor",
+      "feature_set": "raw"
+    }
+  },
+  "environment": {
+    "python": "3.12.16",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.1",
+    "xgboost": "3.4.1",
+    "joblib": "1.4.2"
+  },
+  "source_sha256": {
+    "C_models": "6792d778fb0a212b8e36c8d276c4b16ac8178cf4bf100168365fc875cc21d432",
+    "C_validation_metrics": "27d6ea99f9b88604cfec86f07f4e3cf8daa827d6fb327d13160e5e3f581abe74",
+    "D_models": "57bc078d4357be28b086d2643fb8a7b98ec49ebe7c6f60784b051ac338374eef",
+    "D_freeze_manifest": "190fbfa9f0629643dcc3ccab314ab4c509af756544f68919db3a781119310da3"
+  }
+}
