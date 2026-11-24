@@ -1,0 +1,4 @@
+strategy,candidate,model,feature_set,train_rows,validation_rows,test_rows,train_failures,validation_failures,test_failures,threshold,average_precision,roc_auc,precision,recall,f1,tp,fp,tn,fn,support,normal_fp,normal_denominator,normal_fpr
+retain,engineered_RandomForest_unweighted_1,RandomForest,engineered,7000,1500,1500,237,51,51,0.49464209706838819,0.91689275380920632,0.98855194251613698,0.97619047619047616,0.80392156862745101,0.88172043010752688,41,1,1448,10,51,1,1449,0.00069013112491373362
+drop_conflicts,engineered_RandomForest_unweighted_1,RandomForest,engineered,6981,1494,1498,230,49,51,0.4417772304324028,0.91398816745753342,0.98429475452931692,1,0.84313725490196079,0.91489361702127658,43,0,1447,8,51,0,1447,0
+total_from_modes,engineered_RandomForest_unweighted_1,RandomForest,engineered,7000,1500,1500,242,53,53,0.51052755290218477,0.89727281023937711,0.98354435331394818,1,0.75471698113207553,0.86021505376344087,40,0,1447,13,53,0,1447,0

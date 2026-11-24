@@ -1,0 +1,22 @@
+{
+  "strategies": {
+    "retain": "Use the original Machine failure target.",
+    "drop_conflicts": "Remove all rows where Machine failure differs from any mode label.",
+    "total_from_modes": "Define binary failure as any mode prediction being positive."
+  },
+  "d_protocol": "Frozen models for retain and total_from_modes; refit with the same selected hyperparameters for drop_conflicts.",
+  "c_protocol": "Validation-best engineered RF; frozen for retain and refit with the same hyperparameters for the other strategies.",
+  "target_fpr": 0.05,
+  "environment": {
+    "python": "3.12.16",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scikit-learn": "1.5.1",
+    "xgboost": "3.4.1",
+    "joblib": "1.4.2"
+  },
+  "source_sha256": {
+    "D_models": "57bc078d4357be28b086d2643fb8a7b98ec49ebe7c6f60784b051ac338374eef",
+    "C_models": "6792d778fb0a212b8e36c8d276c4b16ac8178cf4bf100168365fc875cc21d432"
+  }
+}

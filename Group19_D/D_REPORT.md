@@ -83,6 +83,13 @@ engineered `15.74% [13.80%, 17.60%]`。区间只描述固定模型和固定测�
 | RNF | 无特征确定性规则 | 随机注入 | 不报告 | 不报告 | 否 |
 
 HDF、PWF、OSF 的规则在训练、验证、测试集上都 100% 复原原始模式标签，说明
+逐行核对表进一步确认：这三个确定性规则在全部 10,000 条记录以及 train /
+validation / test 三个划分上均为 `FP = 0, FN = 0, mismatches = 0`。TWF 窗口规则
+在全量数据有 750 条不匹配，RNF 的 19 条正例全部无法由规则检出。这个结果说明
+learned RF 的 AP≈1.000 与 rule baseline 是两种不同证据：前者是排序表现，
+后者是逐行确定性核对；engineered RF 在 HDF/PWF/OSF 的操作点 F1 仍为
+0.29–0.37，并不等于规则 baseline 的 F1=1。
+
 engineered 输入接近完美的 AP 主要是生成器关系恢复。TWF 的窗口只是随机故障的
 暴露条件；RNF 完全随机。因此不能把 five-mode headline 写成“模型发现了五个真实
 故障规律”。把四种可用规则直接取 OR 后，总故障测试 AP/F1 为 0.288 / 0.456，
@@ -125,6 +132,30 @@ engineered 输入接近完美的 AP 主要是生成器关系恢复。TWF 的窗�
 `0.726 / 0.707`，FPR 为 `0.95%`。这说明固定偏置造成的阈值漂移远比随机缺失的
 方差影响严重。Engineered 特征在缺失条件下仍略优于 raw，但在偏置条件下不再占优，
 其零噪声优势不能解释为稳健性。
+
+## 27 条标签冲突敏感性
+
+三个口径分别为：
+
+1. `retain`：保留原始 `Machine failure`，即当前主结果；
+2. `drop_conflicts`：从 train / validation / test 删除 27 条冲突记录，并用原选中
+   超参数重新拟合 D 和 C；
+3. `total_from_modes`：把总故障定义为五种模式的 OR，D 模式模型不变，但按新二分类
+   正常样本重新校准阈值。
+
+27 条冲突的分布为 train 19、validation 6、test 2；其中 9 条总故障为 1 但五模式
+全 0，18 条总故障为 0 但至少一个模式为 1。删除测试冲突后 RNF 支持数由 2 降为 0，
+因此跨口径只能比较排除 RNF 的四模式宏 AP。
+
+| 口径 | C AP | C F1 | C FPR | D raw 四模式宏 AP | D eng. 四模式宏 AP | raw union FPR | eng. union FPR |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| retain | 0.917 | 0.882 | 0.07% | 0.674 | 0.768 | 18.36% | 15.74% |
+| drop | 0.914 | 0.915 | 0.00% | 0.674 | 0.773 | 15.41% | 13.61% |
+| modes define total | 0.897 | 0.860 | 0.00% | 0.674 | 0.768 | 18.38% | 15.69% |
+
+结论对冲突处理基本稳定。C 的 AP 最大下降为 0.020，D 的四模式宏 AP 变化不超过
+0.005；删除冲突后并集 FPR 略低，部分原因是删除了 2 条总故障为 0、但某模式为 1
+的测试记录。该下降不能解释为模型更容易部署。
 
 ## Report-ready English section
 
@@ -224,6 +255,22 @@ missingness, D macro AP was 0.449 raw and 0.481 engineered, with union FPR
 that threshold drift from constant bias is more consequential than the
 additional variance from this missing-data protocol.
 
+We also evaluated three treatments of the 27 audited total/mode-label
+conflicts: retaining the original target, dropping all conflict rows and
+refitting, and defining total failure as the OR of the five mode labels.
+There were 19 conflicts in train, 6 in validation, and 2 in test. Dropping the
+test conflicts removed both RNF positives, so the cross-strategy diagnostic
+comparison uses macro AP over the four interpretable modes.
+
+The four-mode macro AP was effectively unchanged: raw remained 0.674 in all
+three strategies; engineered changed from 0.768 to 0.773 under dropping and
+0.768 under mode-derived totals. C AP changed from 0.917 to 0.914 under
+dropping and 0.897 under mode-derived totals. Union FPR changed from 15.74%
+to 13.61% and 15.69% for engineered D. The lower FPR after dropping partly
+reflects removal of two test conflict records and is not evidence of improved
+deployment performance. The main conclusions are therefore robust to the
+conflict treatment, with the RNF support caveat made explicit.
+
 The principal limitation is statistical support. The test split contains only
 eight `TWF`, eighteen `HDF`, thirteen `PWF`, fifteen `OSF`, and two `RNF`
 positive records. `RNF` conclusions are especially unstable. Five overlapping
@@ -248,6 +295,7 @@ The corruption extension uses a separate Conda environment:
 ```shell
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
+conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
 ```
 
 - Exact mode metrics: [test_metrics.csv](results/test_metrics.csv),
@@ -264,12 +312,16 @@ conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
 - Threshold comparison: [threshold_calibration.csv](results/threshold_calibration.csv),
   [threshold_system_summary.csv](results/threshold_system_summary.csv)
 - Generator-rule oracle: [oracle_metrics.csv](results/oracle_metrics.csv),
+  [oracle_rule_checks.csv](results/oracle_rule_checks.csv),
   [oracle_vs_d.csv](results/oracle_vs_d.csv)
 - Per-mode feature importance:
   [permutation_importance_by_mode.csv](results/permutation_importance_by_mode.csv)
 - Corruption comparison:
   [corruption_binary_summary.csv](results/corruption_binary_summary.csv),
   [corruption_d_aggregate_summary.csv](results/corruption_d_aggregate_summary.csv)
+- Label-conflict sensitivity:
+  [label_conflict_binary_metrics.csv](results/label_conflict_binary_metrics.csv),
+  [label_conflict_d_aggregate.csv](results/label_conflict_d_aggregate.csv)
 - Frozen protocol and hashes: [freeze_manifest.json](results/freeze_manifest.json)
 
 Read floating-point CSV files with `float_precision="round_trip"` when checking

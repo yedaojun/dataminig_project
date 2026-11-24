@@ -35,6 +35,7 @@ not changed:
 ```shell
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
+conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
 ```
 
 ## Diagnostic protocol
@@ -102,6 +103,7 @@ That selection is based on validation results alone.
 | `results/threshold_system_summary.csv` | Macro/micro F1 and any-mode FPR under each threshold method |
 | `results/bootstrap_intervals.png`, `threshold_calibration.png` | Presentation figures for uncertainty and threshold sensitivity |
 | `Group19_D/oracle_rules.json`, `results/oracle_metrics.csv` | Fixed AI4I generator rules and rule-oracle metrics on all partitions |
+| `results/oracle_rule_checks.csv` | TP/FP/FN and mismatch counts over all 10,000 rows and each split |
 | `results/oracle_vs_d.csv`, `oracle_vs_d.png` | Oracle-vs-model test comparison with stochastic/unavailable modes identified |
 | `results/permutation_importance_by_mode.csv` | Validation-only five-repeat permutation AP drop for every mode and input feature |
 | `results/mode_feature_importance_heatmap.png` | Per-mode feature-importance heatmaps for raw and engineered inputs |
@@ -109,6 +111,11 @@ That selection is based on validation results alone.
 | `results/corruption_binary_repeats.csv`, `corruption_binary_summary.csv` | Frozen C engineered RF and B raw LOF binary comparisons under every corruption |
 | `results/corruption_d_aggregate_repeats.csv`, `corruption_d_aggregate_summary.csv` | D macro AP/F1 and any-mode FPR by corruption condition |
 | `results/corruption_*_comparison.png`, `corruption_mode_heatmap.png` | Presentation figures for binary and five-mode corruption sensitivity |
+| `results/label_conflict_rows.csv` | The 27 audited conflicts by split, row ID, total label, and five mode labels |
+| `results/label_conflict_d_mode_metrics.csv`, `label_conflict_d_aggregate.csv` | D diagnostic sensitivity under retain, drop, and mode-derived total labels |
+| `results/label_conflict_binary_metrics.csv` | C binary-model sensitivity under the same three strategies |
+| `results/label_conflict_*_predictions.csv` | Row-level predictions and alarms for every strategy |
+| `results/label_conflict_*_sensitivity.png` | Presentation figures for label-conflict sensitivity |
 
 `test_predictions.csv` uses:
 

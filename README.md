@@ -27,6 +27,7 @@ separate Conda environment:
 ```shell
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
+conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
 ```
 
 The report-ready interpretation and limitations are in

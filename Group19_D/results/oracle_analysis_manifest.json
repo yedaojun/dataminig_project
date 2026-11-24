@@ -17,6 +17,7 @@
   "outputs": {
     "oracle_metrics": "oracle_metrics.csv",
     "oracle_predictions": "oracle_predictions.csv",
+    "oracle_rule_checks": "oracle_rule_checks.csv",
     "oracle_vs_d": "oracle_vs_d.csv",
     "importance": "permutation_importance_by_mode.csv",
     "importance_summary": "permutation_importance_summary.csv",

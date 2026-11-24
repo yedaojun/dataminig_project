@@ -534,6 +534,17 @@ def check_oracle_analysis(config: dict) -> None:
         "stochastic_exposure_window",
         "no_deterministic_rule",
     }
+    checks = pd.read_csv(
+        OUT / "oracle_rule_checks.csv",
+        float_precision="round_trip",
+    )
+    assert len(checks) == 4 * (len(MODES) + 1)
+    assert set(checks.partition) == {"all", "train", "validation", "test"}
+    deterministic = checks[checks["mode"].isin(["HDF", "PWF", "OSF"])]
+    assert (deterministic.mismatches == 0).all()
+    assert np.isclose(deterministic.exact_match_rate, 1.0).all()
+    rnf_checks = checks[checks["mode"] == "RNF"]
+    assert (rnf_checks.predicted_positive == 0).all()
 
     importance = pd.read_csv(
         OUT / "permutation_importance_by_mode.csv",
@@ -657,6 +668,86 @@ def check_corruption_analysis(config: dict) -> None:
     )
 
 
+def check_label_conflict_analysis(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "label_conflict_manifest.json").read_text(encoding="utf-8")
+    )
+    assert set(manifest["strategies"]) == {
+        "retain",
+        "drop_conflicts",
+        "total_from_modes",
+    }
+    rows = pd.read_csv(OUT / "label_conflict_rows.csv")
+    assert len(rows) == 27
+    assert rows.partition.value_counts().to_dict() == {
+        "train": 19,
+        "validation": 6,
+        "test": 2,
+    }
+    assert int(
+        ((rows.total_failure == 1) & (rows.any_mode == 0)).sum()
+    ) == 9
+    assert int(
+        ((rows.total_failure == 0) & (rows.any_mode == 1)).sum()
+    ) == 18
+    d_modes = pd.read_csv(
+        OUT / "label_conflict_d_mode_metrics.csv",
+        float_precision="round_trip",
+    )
+    d_aggregate = pd.read_csv(
+        OUT / "label_conflict_d_aggregate.csv",
+        float_precision="round_trip",
+    )
+    c_metrics = pd.read_csv(
+        OUT / "label_conflict_binary_metrics.csv",
+        float_precision="round_trip",
+    )
+    assert len(d_modes) == 3 * len(config["feature_sets"]) * len(MODES)
+    assert len(d_aggregate) == 3 * len(config["feature_sets"])
+    assert len(c_metrics) == 3
+    assert set(d_modes.strategy) == set(manifest["strategies"])
+    assert set(c_metrics.strategy) == set(manifest["strategies"])
+    drop = d_aggregate[d_aggregate.strategy == "drop_conflicts"]
+    assert (drop.train_rows == 6981).all()
+    assert (drop.validation_rows == 1494).all()
+    assert (drop.test_rows == 1498).all()
+    assert (drop.evaluable_modes == 4).all()
+    dropped_rnf = d_modes[
+        (d_modes.strategy == "drop_conflicts")
+        & (d_modes["mode"] == "RNF")
+    ]
+    assert (dropped_rnf.support == 0).all()
+    existing = pd.read_csv(
+        OUT / "test_aggregates.csv",
+        float_precision="round_trip",
+    )
+    for feature_set in config["feature_sets"]:
+        retain = d_aggregate[
+            (d_aggregate.strategy == "retain")
+            & (d_aggregate.feature_set == feature_set)
+        ].iloc[0]
+        reference = existing[existing.feature_set == feature_set].iloc[0]
+        assert np.isclose(
+            retain.test_macro_average_precision_evaluable,
+            reference.macro_average_precision,
+        )
+        assert np.isclose(
+            retain.test_any_mode_normal_fpr,
+            reference.any_mode_normal_fpr,
+        )
+    retain_c = c_metrics[c_metrics.strategy == "retain"].iloc[0]
+    assert np.isclose(retain_c.average_precision, 0.91689275380920632)
+    relabel = d_aggregate[d_aggregate.strategy == "total_from_modes"]
+    retain = d_aggregate[d_aggregate.strategy == "retain"]
+    for feature_set in config["feature_sets"]:
+        relabel_row = relabel[relabel.feature_set == feature_set].iloc[0]
+        retain_row = retain[retain.feature_set == feature_set].iloc[0]
+        assert np.isclose(
+            relabel_row.test_macro_average_precision_excluding_rnf,
+            retain_row.test_macro_average_precision_excluding_rnf,
+        )
+
+
 def check_artifacts(manifest: dict) -> None:
     assert manifest["models_sha256"] == hashlib_sha256(MODEL_FILE)
     assert manifest["config_sha256"] == hashlib_sha256(CONFIG)
@@ -697,6 +788,7 @@ def check_artifacts(manifest: dict) -> None:
         "oracle_analysis_manifest.json",
         "oracle_metrics.csv",
         "oracle_predictions.csv",
+        "oracle_rule_checks.csv",
         "oracle_vs_d.csv",
         "oracle_vs_d.png",
         "permutation_importance_by_mode.csv",
@@ -712,6 +804,16 @@ def check_artifacts(manifest: dict) -> None:
         "corruption_binary_comparison.png",
         "corruption_d_comparison.png",
         "corruption_mode_heatmap.png",
+        "label_conflict_manifest.json",
+        "label_conflict_rows.csv",
+        "label_conflict_d_mode_metrics.csv",
+        "label_conflict_d_aggregate.csv",
+        "label_conflict_d_support.csv",
+        "label_conflict_d_predictions.csv",
+        "label_conflict_binary_metrics.csv",
+        "label_conflict_binary_predictions.csv",
+        "label_conflict_d_sensitivity.png",
+        "label_conflict_binary_sensitivity.png",
     ]
     for name in required:
         path = OUT / name
@@ -737,12 +839,14 @@ def main() -> None:
     check_extended(config)
     check_oracle_analysis(config)
     check_corruption_analysis(config)
+    check_label_conflict_analysis(config)
     check_artifacts(manifest)
     print(
         "PASS: selection, thresholds, row labels, metrics, alarms, FPR denominators, "
         "aggregates, noise repeats, bootstrap intervals, RNF sensitivity, "
         "threshold calibration, rule oracle, permutation importance, "
-        "Gaussian/bias/missing corruption comparison, and artifacts verified"
+        "Gaussian/bias/missing corruption, label-conflict sensitivity, "
+        "and artifacts verified"
     )
 
 

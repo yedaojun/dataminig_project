@@ -1,0 +1,7 @@
+strategy,partition,feature_set,rows,TWF_support,HDF_support,PWF_support,OSF_support,RNF_support
+retain,test,raw,1500,8,18,13,15,2
+retain,test,engineered,1500,8,18,13,15,2
+drop_conflicts,test,raw,1498,8,18,13,15,0
+drop_conflicts,test,engineered,1498,8,18,13,15,0
+total_from_modes,test,raw,1500,8,18,13,15,2
+total_from_modes,test,engineered,1500,8,18,13,15,2

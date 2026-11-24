@@ -215,6 +215,46 @@ def oracle_comparison(oracle: pd.DataFrame) -> pd.DataFrame:
     return comparison
 
 
+def oracle_rule_checks(predictions: pd.DataFrame) -> pd.DataFrame:
+    frames = [predictions.copy()]
+    all_rows = predictions.copy()
+    all_rows["partition"] = "all"
+    frames.append(all_rows)
+    combined = pd.concat(frames, ignore_index=True)
+    rows = []
+    for (partition, mode), frame in combined.groupby(
+        ["partition", "mode"],
+        sort=False,
+    ):
+        y = frame.y_true.to_numpy(dtype=int)
+        prediction = frame.rule_score.to_numpy(dtype=int)
+        tp = int(np.sum((y == 1) & (prediction == 1)))
+        fp = int(np.sum((y == 0) & (prediction == 1)))
+        fn = int(np.sum((y == 1) & (prediction == 0)))
+        tn = int(np.sum((y == 0) & (prediction == 0)))
+        rows.append({
+            "partition": partition,
+            "mode": mode,
+            "rows": len(frame),
+            "support": int(y.sum()),
+            "predicted_positive": int(prediction.sum()),
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
+            "tn": tn,
+            "mismatches": fp + fn,
+            "exact_match_rate": float(np.mean(y == prediction)),
+            "rule_available": bool(frame.rule_available.iloc[0]),
+        })
+    result = pd.DataFrame(rows)
+    result.to_csv(
+        OUT / "oracle_rule_checks.csv",
+        index=False,
+        float_format="%.17g",
+    )
+    return result
+
+
 def permutation_importance(config: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     verify_freeze()
     frozen = joblib.load(MODEL_FILE)
@@ -389,7 +429,8 @@ def figures(comparison: pd.DataFrame, importance: pd.DataFrame) -> None:
 def main() -> None:
     config = read_config()
     rules = json.loads(RULES_FILE.read_text(encoding="utf-8"))
-    oracle, _ = oracle_evaluation(rules)
+    oracle, oracle_predictions = oracle_evaluation(rules)
+    oracle_rule_checks(oracle_predictions)
     comparison = oracle_comparison(oracle)
     importance_detail, importance_summary = permutation_importance(config)
     figures(comparison, importance_detail)
@@ -405,6 +446,7 @@ def main() -> None:
         "outputs": {
             "oracle_metrics": "oracle_metrics.csv",
             "oracle_predictions": "oracle_predictions.csv",
+            "oracle_rule_checks": "oracle_rule_checks.csv",
             "oracle_vs_d": "oracle_vs_d.csv",
             "importance": "permutation_importance_by_mode.csv",
             "importance_summary": "permutation_importance_summary.csv",
