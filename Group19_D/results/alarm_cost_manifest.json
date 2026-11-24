@@ -1,0 +1,34 @@
+{
+  "unit": "one test record = one device inspection cycle",
+  "devices": 1000,
+  "prevalences": [
+    0.01,
+    0.034,
+    0.05,
+    0.1
+  ],
+  "test_prevalence": 0.034,
+  "miss_to_false_cost_ratios": [
+    1,
+    5,
+    10,
+    20,
+    50
+  ],
+  "cost_units": "expected_cost = FP * 1 + FN * (C_FN / C_FP)",
+  "operating_points": [
+    "C_engineered_RF_F1",
+    "C_engineered_RF_1%_validation_fpr",
+    "C_engineered_RF_2%_validation_fpr",
+    "C_engineered_RF_5%_validation_fpr",
+    "C_raw_XGB_F1",
+    "B_raw_LOF_F1",
+    "D_raw_per_mode_5pct_union",
+    "D_engineered_per_mode_5pct_union"
+  ],
+  "source_sha256": {
+    "C_test_metrics": "948c01223384c5d08494915dc4164d2c0059ed32440e1d32516297b2d570f745",
+    "C_alarm_budgets": "507ee88d726025b616deb946d707ccbbce0bcd6b98393d3a364537805f12391d",
+    "D_threshold_system_summary": "32d06ebc44d2cedac0b615dbc7d5e33cfd19f9b34728b1e1296136e52b7120e2"
+  }
+}

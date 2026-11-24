@@ -1,0 +1,19 @@
+{
+  "budgets": [
+    0.01,
+    0.02,
+    0.05
+  ],
+  "selection": "Largest common per-mode validation false-alarm allowance whose five-mode union remains within the validation union budget.",
+  "alarm_rule": "score >= threshold; union = any of five modes",
+  "cost_assumption": {
+    "devices": 1000,
+    "test_prevalence": 0.034,
+    "miss_to_false_cost_ratio": 10
+  },
+  "source_sha256": {
+    "validation_predictions": "90f6d882953d63964690313d0d4d326c4d99440bc30fe097f4f1d1a7f37ad8a4",
+    "test_predictions": "7cf1c964eb3959e0e5990e77f00424934d45224cef30f65408f1ceaa7fc7cf17",
+    "freeze_manifest": "190fbfa9f0629643dcc3ccab314ab4c509af756544f68919db3a781119310da3"
+  }
+}

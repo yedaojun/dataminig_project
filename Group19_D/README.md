@@ -19,6 +19,8 @@ python -m Group19_D.run evaluate-test
 python -m Group19_D.noise
 python -m Group19_D.extended_analysis
 python -m Group19_D.oracle_analysis
+python -m Group19_D.alarm_cost_analysis
+python -m Group19_D.system_alarm_calibration
 python -m Group19_D.check_results
 ```
 
@@ -36,6 +38,8 @@ not changed:
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
 conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
+conda run -n aiaa3111_corruption python -B -m Group19_D.leave_one_type_out
+conda run -n aiaa3111_corruption python -B -m Group19_D.repeated_splits
 ```
 
 ## Diagnostic protocol
@@ -116,6 +120,24 @@ That selection is based on validation results alone.
 | `results/label_conflict_binary_metrics.csv` | C binary-model sensitivity under the same three strategies |
 | `results/label_conflict_*_predictions.csv` | Row-level predictions and alarms for every strategy |
 | `results/label_conflict_*_sensitivity.png` | Presentation figures for label-conflict sensitivity |
+| `results/alarm_operating_points.csv` | Frozen C/B/D thresholds expressed as recall and normal FPR |
+| `results/alarm_cost_scenarios.csv` | Expected alarms and costs per 1,000 devices across prevalence and cost-ratio scenarios |
+| `results/alarm_cost_actual_prevalence.csv` | Per-1,000-device scenario at the observed 3.4% test failure prevalence |
+| `results/alarm_cost_per_1000.png`, `alarm_cost_sensitivity.png` | Operational alarm/cost comparisons |
+| `results/loto_d_mode_metrics.csv`, `loto_d_aggregate.csv` | D per-mode and macro results when each product Type is held out |
+| `results/loto_binary_metrics.csv` | C binary results for the same leave-one-type-out folds |
+| `results/loto_support.csv` | Train/validation/test rows, failures, and mode supports by held-out Type |
+| `results/loto_*_predictions.csv` | Row-level LOTO scores and alarms for D and C |
+| `results/loto_d_comparison.png`, `loto_c_comparison.png` | In-domain vs leave-one-type-out comparisons |
+| `results/repeated_split_d_aggregate.csv`, `repeated_split_d_mode_metrics.csv` | D results for model refits under split seeds 42–46 |
+| `results/repeated_split_binary_metrics.csv` | C engineered RF results under the same five splits |
+| `results/repeated_split_summary.csv` | Mean, sample SD, min, and max by model/feature set |
+| `results/repeated_split_*_stability.png` | Split-to-split stability figures |
+| `results/system_fpr_search.csv` | Full validation search over common per-mode allowances for system union-FPR budgets |
+| `results/system_thresholds.csv` | Selected per-mode thresholds for 1%, 2%, and 5% union-FPR targets |
+| `results/system_alarm_metrics.csv` | Validation/test union FPR, union recall, precision, and macro F1 |
+| `results/system_alarm_cost.csv` | Per-1,000-device cost at a 10:1 missed:false ratio |
+| `results/system_alarm_calibration.png` | System-level FPR and recall tradeoff |
 
 `test_predictions.csv` uses:
 

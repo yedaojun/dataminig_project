@@ -1,0 +1,9 @@
+operating_point,model_family,feature_set,threshold_source,test_recall,test_normal_fpr,test_average_precision,test_f1,test_support
+C_engineered_RF_F1,C supervised binary,engineered,validation positive-class F1,0.80392156862745101,0.00069013112491373362,0.91689275380920632,0.88172043010752688,51
+C_engineered_RF_1%_validation_fpr,C supervised binary,engineered,validation-normal FPR <= 1%,0.88235294117647056,0.004830917874396135,,,51
+C_engineered_RF_2%_validation_fpr,C supervised binary,engineered,validation-normal FPR <= 2%,0.88235294117647056,0.01725327812284334,,,51
+C_engineered_RF_5%_validation_fpr,C supervised binary,engineered,validation-normal FPR <= 5%,0.94117647058823528,0.052449965493443752,,,51
+C_raw_XGB_F1,C supervised binary,raw,validation positive-class F1,0.80392156862745101,0.011042097998619738,0.80220314321103592,0.7592592592592593,51
+B_raw_LOF_F1,B feature-only scoring,raw,validation positive-class F1,0.31372549019607843,0.033816425120772944,0.22343927945723255,0.27586206896551724,51
+D_raw_per_mode_5pct_union,D five-mode diagnosis,raw,5% FPR per mode; union alarms,0.94117647058823528,0.18357487922705315,,0.19043614846969598,51
+D_engineered_per_mode_5pct_union,D five-mode diagnosis,engineered,5% FPR per mode; union alarms,0.98039215686274506,0.15734989648033126,,0.2267341756299705,51

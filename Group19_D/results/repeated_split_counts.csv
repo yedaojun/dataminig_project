@@ -1,0 +1,6 @@
+seed,train_rows,validation_rows,test_rows,train_failures,validation_failures,test_failures
+42,7000,1500,1500,237,51,51
+43,7000,1500,1500,237,51,51
+44,7000,1500,1500,237,51,51
+45,7000,1500,1500,237,51,51
+46,7000,1500,1500,237,51,51

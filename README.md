@@ -18,6 +18,8 @@ python -m Group19_D.run evaluate-test
 python -m Group19_D.noise
 python -m Group19_D.extended_analysis
 python -m Group19_D.oracle_analysis
+python -m Group19_D.alarm_cost_analysis
+python -m Group19_D.system_alarm_calibration
 python -m Group19_D.check_results
 ```
 
@@ -28,6 +30,8 @@ separate Conda environment:
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
 conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
+conda run -n aiaa3111_corruption python -B -m Group19_D.leave_one_type_out
+conda run -n aiaa3111_corruption python -B -m Group19_D.repeated_splits
 ```
 
 The report-ready interpretation and limitations are in

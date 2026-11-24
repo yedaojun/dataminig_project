@@ -157,6 +157,100 @@ engineered 输入接近完美的 AP 主要是生成器关系恢复。TWF 的窗�
 0.005；删除冲突后并集 FPR 略低，部分原因是删除了 2 条总故障为 0、但某模式为 1
 的测试记录。该下降不能解释为模型更容易部署。
 
+## 每 1,000 台设备的报警成本
+
+为避免 FPR/F1 停留在抽象指标，我们把冻结阈值换算为每 1,000 台设备、每个检查
+周期的期望计数。故障率使用测试集 `51 / 1,500 = 3.4%`，并另外对
+1% / 5% / 10% 故障率做敏感性分析。设一次误报审核成本为 1 单位，一次漏检成本为
+`R` 单位：
+
+```text
+TP = 1000 × prevalence × recall
+FP = 1000 × (1 - prevalence) × normal_FPR
+FN = 1000 × prevalence × (1 - recall)
+cost = FP + R × FN
+```
+
+在 3.4% 故障率和 `R = 10` 时：
+
+| 操作点 | TP | FP | FN | 总报警 | 成本单位 |
+|---|---:|---:|---:|---:|---:|
+| C engineered RF，F1 阈值 | 27.3 | 0.7 | 6.7 | 28.0 | 67.3 |
+| C engineered RF，1% 验证 FPR | 30.0 | 4.7 | 4.0 | 34.7 | 44.7 |
+| C raw XGB，F1 阈值 | 27.3 | 10.7 | 6.7 | 38.0 | 77.3 |
+| B raw LOF，F1 阈值 | 10.7 | 32.7 | 23.3 | 43.3 | 266.0 |
+| D raw 五模式并集 | 32.0 | 177.3 | 2.0 | 209.3 | 197.3 |
+| D engineered 五模式并集 | 33.3 | 152.0 | 0.7 | 185.3 | 158.7 |
+
+成本比从 1:1 增加到 50:1 时，C engineered RF 的 F1 点成本从 7.3 增至 334.0，
+1% 预算点从 8.7 增至 204.7；D engineered 并集仅从 152.7 增至 185.3，因为其成本
+早已被大量误报主导。该换算清楚说明：五模式诊断每模式 5% 不能直接用于整机报警，
+需要先优化系统级并集预算。这里的“每台设备”假设每条记录对应一次设备检查，若一台
+设备有多个检查周期，应乘以周期数，并考虑同一设备报警的相关性。
+
+## Leave-one-product-type-out
+
+跨产品类型实验以每种 Type 为一次留出：
+
+- 在 A 的 train 中删除该 Type 后拟合；
+- 在 A 的 validation 中删除该 Type 后校准阈值；
+- 只在 A 的 test 中属于该 Type 的行上评估；
+- 另将原先在全部 Type 上训练的冻结模型在同一测试切片上作为 in-domain reference。
+
+由于 `Type` 的一热编码只见过训练折中的类别，留出 Type 在测试时会编码为全零；
+因此这比随机划分更严格，模拟了产品类型本身未被模型见过的情况。
+
+| 留出 Type | 测试行/故障 | C AP reference→LOTO | C F1 reference→LOTO | D eng. 宏 AP reference→LOTO | D eng. union FPR |
+|---|---:|---:|---:|---:|---:|
+| L | 885 / 26 | 0.927→0.707 | 0.939→0.622 | 0.635→0.544 | 15.83%→15.95% |
+| M | 472 / 20 | 0.900→0.855 | 0.919→0.865 | 0.780→0.765 | 12.83%→16.59% |
+| H | 143 / 5 | 0.810→0.967 | 0.286→0.800 | 1.000→0.625 | 24.64%→13.04% |
+
+留出 L 时性能下降最大，表明 Type 分布变化会影响 C 和 D。留出 M 时结果较稳定。
+H 只有 5 个总故障，且测试中 PWF/OSF/RNF 均为 0 正例，D 只能评估 TWF/HDF 两个
+模式；其看似有利的 AP/FPR 变化不能作为稳定结论。总体而言，随机划分结果不能直接
+解释为跨产品类型泛化，尤其应以 L 的结果作为主要风险证据。
+
+## 五次重复分层划分
+
+以 seed `42–46` 分别重建 70/15/15 分层划分，保持 D/C 的原选中超参数，在每个
+划分中重新拟合、只在验证集校准阈值，再评估测试集。Seed 42 与 A 的冻结训练索引
+逐行一致。五次结果使用样本标准差（`ddof=1`），表示划分敏感性，不是置信区间。
+
+| 模型/输入 | 重复数 | 均值 ± 标准差 | 最小–最大 |
+|---|---:|---:|---:|
+| D raw 宏 AP | 5 | 0.557 ± 0.020 | 0.528–0.573 |
+| D engineered 宏 AP | 5 | 0.611 ± 0.007 | 0.607–0.623 |
+| D raw union FPR | 5 | 18.98% ± 1.12% | 17.74%–20.36% |
+| D engineered union FPR | 5 | 16.78% ± 1.29% | 15.74%–18.22% |
+| C engineered RF AP | 5 | 0.894 ± 0.041 | 0.835–0.932 |
+| C engineered RF F1 | 5 | 0.872 ± 0.047 | 0.796–0.915 |
+
+Engineered D 在五个种子上均优于 raw 宏 AP，平均差约 0.055；其并集 FPR 也均低于
+raw。C 的 AP 波动较大，seed 45 为最低值 0.835。总体而言，五模式诊断的优势方向
+稳定，但单一划分下的具体小数和 C 的绝对 AP 不应被过度精确解读。
+
+## 系统级并集 FPR 校准
+
+原主结果的 5% 是“每个模式各自 5%”，不能直接作为整机报警预算。系统级版本在验证
+正常样本上搜索一个共同 per-mode 允许误报数 `k`，要求五模式并集不超过目标 1% /
+2% / 5%，再冻结阈值评估测试集。该策略仍使用原 D scores，不重新训练或改选模型。
+
+| 输入 | 验证目标 | per-mode `k` | 测试 TP | 测试 FP | 测试 union FPR | union recall | 成本/1000 台 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| raw | 1% | 2 | 27 | 12 | 0.83% | 52.94% | 168.0 |
+| raw | 2% | 5 | 38 | 29 | 2.00% | 74.51% | 106.0 |
+| raw | 5% | 16 | 43 | 71 | 4.90% | 84.31% | 100.7 |
+| engineered | 1% | 2 | 44 | 11 | 0.76% | 86.27% | 54.0 |
+| engineered | 2% | 6 | 45 | 37 | 2.55% | 88.24% | 64.7 |
+| engineered | 5% | 16 | 45 | 73 | 5.04% | 88.24% | 88.7 |
+
+与原来的 engineered“每模式 5%”相比，系统级 1% 预算把测试误报从 228 降到 11，
+同时因 five-mode union 仍可检出大部分故障，成本在 10:1 口径下从 158.7 降到 54.0。
+系统级 5% 与原始设置召回相同，但误报从 228 降到 73。验证目标不保证测试值完全一致：
+engineered 2% 和 5% 的测试 union FPR 分别为 2.55% 和 5.04%。因此报告应同时给出
+验证目标与测试实现值，不能把验证预算当作部署保证。
+
 ## Report-ready English section
 
 We completed the five-mode diagnostic workstream with independent one-vs-rest
@@ -271,6 +365,63 @@ reflects removal of two test conflict records and is not evidence of improved
 deployment performance. The main conclusions are therefore robust to the
 conflict treatment, with the RNF support caveat made explicit.
 
+We translated frozen operating points into expected counts per 1,000 device
+inspections. At the observed 3.4% failure prevalence and a missed-failure cost
+ten times the false-alarm review cost, the C engineered RF F1 threshold
+produced 27.3 detections, 0.7 false alarms, 6.7 misses, and 67.3 cost units
+per 1,000 devices. Its 1% validation-FPR point produced 30.0 detections, 4.7
+false alarms, 4.0 misses, and 44.7 cost units. D's engineered five-mode union
+detected 33.3 failures but generated 152.0 false alarms, totaling 185.3 alarms
+and 158.7 cost units. Raw LOF reached only 10.7 detections with 32.7 false
+alarms and 266.0 cost units.
+
+The qualitative ranking remains stable as the missed:false cost ratio grows
+from 1:1 to 50:1: C's 1% operating point is less costly than its F1 point for
+ratios above one, while the D union remains dominated by false alarms. These
+counts assume one test row equals one inspection. Multiple inspections per
+device require multiplication by cycle count and should account for correlated
+alarms on the same device.
+
+We also performed leave-one-product-type-out evaluation. For each held-out
+Type, models were refit on the other two types in A's training split,
+thresholds were calibrated on validation rows from those observed types, and
+performance was measured only on test rows of the held-out type. Because the
+one-hot encoder sees only observed types, the held-out Type is encoded as
+all-zero at test time.
+
+C binary AP changed from 0.927 to 0.707 when L was held out, from 0.900 to
+0.855 for M, and from 0.810 to 0.967 for H. Engineered D macro AP changed from
+0.635 to 0.544 for L, 0.780 to 0.765 for M, and 1.000 to 0.625 for H. The L
+shift is the clearest evidence that the random-split results should not be
+treated as type-invariant generalization. The H result is much less reliable:
+its test split has five total failures, and PWF, OSF, and RNF have no positive
+test examples, so D's H macro AP uses only TWF and HDF.
+
+Finally, we recreated five 70/15/15 stratified splits using seeds 42–46 and
+refit the fixed D/C settings in every split. D's raw macro AP averaged
+0.557 ± 0.020 and engineered macro AP 0.611 ± 0.007. Engineered inputs had
+higher macro AP in all five splits; the average difference was approximately
+0.055. Any-mode FPR averaged 18.98% ± 1.12% for raw inputs and
+16.78% ± 1.29% for engineered inputs. C engineered RF averaged AP
+0.894 ± 0.041 and F1 0.872 ± 0.047, with seed 45 the weakest split at AP
+0.835. These are sample standard deviations across five split seeds, not
+confidence intervals. They indicate a stable direction for the engineered
+diagnostic advantage, but wide enough variation that single-split decimals
+and C's absolute AP should not be over-interpreted.
+
+We also replaced five independent 5% per-mode budgets with a system-level
+union constraint. A common per-mode validation allowance was selected as the
+largest value whose five-mode union remained within 1%, 2%, or 5%; those
+thresholds were then frozen for test. For engineered inputs, the 1% validation
+budget detected 44 of 51 failures with 11 test false alarms (union FPR 0.76%).
+The 5% budget detected 45 failures with 73 false alarms (5.04%). At a 10:1
+missed:false cost ratio and 3.4% prevalence, the corresponding expected costs
+were 54.0 and 88.7 units per 1,000 devices, compared with 158.7 for the
+original independent-5% thresholds. The system-level 1% point therefore
+substantially reduced alarm load with a smaller recall loss. Validation
+budgets were not exact test guarantees: engineered test FPR was 2.55% for a
+2% validation target and 5.04% for a 5% target.
+
 The principal limitation is statistical support. The test split contains only
 eight `TWF`, eighteen `HDF`, thirteen `PWF`, fifteen `OSF`, and two `RNF`
 positive records. `RNF` conclusions are especially unstable. Five overlapping
@@ -287,6 +438,8 @@ python -m Group19_D.run evaluate-test
 python -m Group19_D.noise
 python -m Group19_D.extended_analysis
 python -m Group19_D.oracle_analysis
+python -m Group19_D.alarm_cost_analysis
+python -m Group19_D.system_alarm_calibration
 python -m Group19_D.check_results
 ```
 
@@ -296,6 +449,8 @@ The corruption extension uses a separate Conda environment:
 conda env create -f Group19_D/environment_corruption.yml
 conda run -n aiaa3111_corruption python -B -m Group19_D.corruption_analysis
 conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivity
+conda run -n aiaa3111_corruption python -B -m Group19_D.leave_one_type_out
+conda run -n aiaa3111_corruption python -B -m Group19_D.repeated_splits
 ```
 
 - Exact mode metrics: [test_metrics.csv](results/test_metrics.csv),
@@ -322,6 +477,18 @@ conda run -n aiaa3111_corruption python -B -m Group19_D.label_conflict_sensitivi
 - Label-conflict sensitivity:
   [label_conflict_binary_metrics.csv](results/label_conflict_binary_metrics.csv),
   [label_conflict_d_aggregate.csv](results/label_conflict_d_aggregate.csv)
+- Alarm cost per 1,000 devices:
+  [alarm_cost_actual_prevalence.csv](results/alarm_cost_actual_prevalence.csv),
+  [alarm_operating_points.csv](results/alarm_operating_points.csv)
+- Leave-one-type-out:
+  [loto_d_aggregate.csv](results/loto_d_aggregate.csv),
+  [loto_binary_metrics.csv](results/loto_binary_metrics.csv)
+- Repeated splits:
+  [repeated_split_summary.csv](results/repeated_split_summary.csv),
+  [repeated_split_d_aggregate.csv](results/repeated_split_d_aggregate.csv)
+- System-level FPR calibration:
+  [system_alarm_metrics.csv](results/system_alarm_metrics.csv),
+  [system_thresholds.csv](results/system_thresholds.csv)
 - Frozen protocol and hashes: [freeze_manifest.json](results/freeze_manifest.json)
 
 Read floating-point CSV files with `float_precision="round_trip"` when checking

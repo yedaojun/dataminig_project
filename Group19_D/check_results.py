@@ -748,6 +748,218 @@ def check_label_conflict_analysis(config: dict) -> None:
         )
 
 
+def check_alarm_cost_analysis() -> None:
+    manifest = json.loads(
+        (OUT / "alarm_cost_manifest.json").read_text(encoding="utf-8")
+    )
+    points = pd.read_csv(
+        OUT / "alarm_operating_points.csv",
+        float_precision="round_trip",
+    )
+    scenarios = pd.read_csv(
+        OUT / "alarm_cost_scenarios.csv",
+        float_precision="round_trip",
+    )
+    actual = pd.read_csv(
+        OUT / "alarm_cost_actual_prevalence.csv",
+        float_precision="round_trip",
+    )
+    assert manifest["devices"] == 1000
+    assert len(points) == 8
+    assert len(scenarios) == 8 * 4 * 5
+    assert len(actual) == 8 * 5
+    assert set(scenarios.miss_to_false_cost_ratio) == {1, 5, 10, 20, 50}
+    assert np.isclose(scenarios.prevalence.nunique(), 4)
+    expected_cost = (
+        scenarios.expected_fp
+        + scenarios.expected_fn * scenarios.miss_to_false_cost_ratio
+    )
+    assert np.allclose(scenarios.expected_cost_units, expected_cost)
+    assert np.allclose(
+        scenarios.expected_alarms,
+        scenarios.expected_tp + scenarios.expected_fp,
+    )
+    assert np.allclose(
+        scenarios.expected_failures,
+        scenarios.expected_tp + scenarios.expected_fn,
+    )
+    engineered_d = points[
+        points.operating_point == "D_engineered_per_mode_5pct_union"
+    ].iloc[0]
+    assert np.isclose(engineered_d.test_normal_fpr, 228 / 1449)
+    assert np.isclose(engineered_d.test_recall, 50 / 51)
+    c_one = points[
+        points.operating_point == "C_engineered_RF_1%_validation_fpr"
+    ].iloc[0]
+    assert np.isclose(c_one.test_recall, 45 / 51)
+    assert np.isclose(c_one.test_normal_fpr, 7 / 1449)
+
+
+def check_loto_analysis(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "loto_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["heldout_types"] == ["L", "M", "H"]
+    support = pd.read_csv(OUT / "loto_support.csv")
+    expected_support = {
+        "L": (2783, 602, 885, 26),
+        "M": (4922, 1053, 472, 20),
+        "H": (6295, 1345, 143, 5),
+    }
+    for row in support.itertuples():
+        assert (
+            row.train_rows,
+            row.validation_rows,
+            row.test_rows,
+            row.test_failures,
+        ) == expected_support[row.heldout_type]
+    d_modes = pd.read_csv(
+        OUT / "loto_d_mode_metrics.csv",
+        float_precision="round_trip",
+    )
+    d_aggregate = pd.read_csv(
+        OUT / "loto_d_aggregate.csv",
+        float_precision="round_trip",
+    )
+    c_metrics = pd.read_csv(
+        OUT / "loto_binary_metrics.csv",
+        float_precision="round_trip",
+    )
+    assert len(d_modes) == 3 * 2 * len(config["feature_sets"]) * len(MODES)
+    assert len(d_aggregate) == 3 * 2 * len(config["feature_sets"])
+    assert len(c_metrics) == 3 * 2
+    assert set(d_modes.evaluation) == {"loto", "in_domain_reference"}
+    assert set(c_metrics.heldout_type) == {"L", "M", "H"}
+    h_modes = d_aggregate[
+        (d_aggregate.heldout_type == "H")
+        & (d_aggregate.evaluation == "loto")
+    ]
+    assert (h_modes.evaluable_modes == 2).all()
+    l_modes = d_modes[
+        (d_modes.heldout_type == "L")
+        & (d_modes.evaluation == "loto")
+    ]
+    assert set(l_modes["mode"]) == set(MODES)
+    c_loto_l = c_metrics[
+        (c_metrics.heldout_type == "L")
+        & (c_metrics.evaluation == "loto")
+    ].iloc[0]
+    assert c_loto_l.average_precision < 0.72
+
+
+def check_repeated_splits(config: dict) -> None:
+    manifest = json.loads(
+        (OUT / "repeated_split_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["seeds"] == [42, 43, 44, 45, 46]
+    counts = pd.read_csv(OUT / "repeated_split_counts.csv")
+    assert len(counts) == 5
+    for row in counts.itertuples():
+        assert (row.train_rows, row.validation_rows, row.test_rows) == (
+            7000,
+            1500,
+            1500,
+        )
+        assert (row.train_failures, row.validation_failures, row.test_failures) == (
+            237,
+            51,
+            51,
+        )
+    d_modes = pd.read_csv(
+        OUT / "repeated_split_d_mode_metrics.csv",
+        float_precision="round_trip",
+    )
+    d_aggregate = pd.read_csv(
+        OUT / "repeated_split_d_aggregate.csv",
+        float_precision="round_trip",
+    )
+    c_metrics = pd.read_csv(
+        OUT / "repeated_split_binary_metrics.csv",
+        float_precision="round_trip",
+    )
+    summary = pd.read_csv(
+        OUT / "repeated_split_summary.csv",
+        float_precision="round_trip",
+    )
+    assert len(d_modes) == 5 * len(config["feature_sets"]) * len(MODES)
+    assert len(d_aggregate) == 5 * len(config["feature_sets"])
+    assert len(c_metrics) == 5
+    assert len(summary) == 3
+    assert set(d_aggregate.seed) == {42, 43, 44, 45, 46}
+    seed42 = d_aggregate[d_aggregate.seed == 42]
+    reference = pd.read_csv(
+        OUT / "test_aggregates.csv",
+        float_precision="round_trip",
+    )
+    for feature_set in config["feature_sets"]:
+        row = seed42[seed42.feature_set == feature_set].iloc[0]
+        ref = reference[reference.feature_set == feature_set].iloc[0]
+        assert np.isclose(row.macro_average_precision, ref.macro_average_precision)
+        assert np.isclose(row.any_mode_normal_fpr, ref.any_mode_normal_fpr)
+    assert np.isclose(
+        c_metrics[c_metrics.seed == 42].average_precision.iloc[0],
+        0.91689275380920632,
+    )
+    d_summary = summary[summary.source == "D"].set_index("feature_set")
+    assert (d_summary.repeats == 5).all()
+    assert np.isfinite(d_summary.macro_average_precision_std).all()
+
+
+def check_system_alarm_calibration() -> None:
+    manifest = json.loads(
+        (OUT / "system_alarm_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["budgets"] == [0.01, 0.02, 0.05]
+    search = pd.read_csv(
+        OUT / "system_fpr_search.csv",
+        float_precision="round_trip",
+    )
+    thresholds = pd.read_csv(
+        OUT / "system_thresholds.csv",
+        float_precision="round_trip",
+    )
+    metrics = pd.read_csv(
+        OUT / "system_alarm_metrics.csv",
+        float_precision="round_trip",
+    )
+    costs = pd.read_csv(
+        OUT / "system_alarm_cost.csv",
+        float_precision="round_trip",
+    )
+    assert len(thresholds) == 2 * 3 * len(MODES)
+    assert len(metrics) == 2 * 3 * 2
+    assert len(costs) == 2 * 3
+    assert len(search) == 2 * sum(
+        int(np.floor(budget * 1449)) + 1
+        for budget in (0.01, 0.02, 0.05)
+    )
+    validation = metrics[metrics.partition == "validation"]
+    assert (
+        validation.union_normal_fpr
+        <= validation.target_union_fpr + 1e-12
+    ).all()
+    engineered_one = metrics[
+        (metrics.feature_set == "engineered")
+        & np.isclose(metrics.target_union_fpr, 0.01)
+        & (metrics.partition == "test")
+    ].iloc[0]
+    assert (engineered_one.union_tp, engineered_one.union_fp) == (44, 11)
+    assert np.isclose(engineered_one.union_normal_fpr, 11 / 1449)
+    engineered_five = metrics[
+        (metrics.feature_set == "engineered")
+        & np.isclose(metrics.target_union_fpr, 0.05)
+        & (metrics.partition == "test")
+    ].iloc[0]
+    assert (engineered_five.union_tp, engineered_five.union_fp) == (45, 73)
+    for row in costs.itertuples():
+        expected_fn = 34 * (1 - row.expected_tp / 34)
+        assert np.isclose(row.expected_tp + row.expected_fn, 34)
+        assert np.isclose(
+            row.expected_cost_units,
+            row.expected_fp + 10 * row.expected_fn,
+        )
+
+
 def check_artifacts(manifest: dict) -> None:
     assert manifest["models_sha256"] == hashlib_sha256(MODEL_FILE)
     assert manifest["config_sha256"] == hashlib_sha256(CONFIG)
@@ -814,6 +1026,37 @@ def check_artifacts(manifest: dict) -> None:
         "label_conflict_binary_predictions.csv",
         "label_conflict_d_sensitivity.png",
         "label_conflict_binary_sensitivity.png",
+        "alarm_cost_manifest.json",
+        "alarm_operating_points.csv",
+        "alarm_cost_scenarios.csv",
+        "alarm_cost_actual_prevalence.csv",
+        "alarm_cost_per_1000.png",
+        "alarm_cost_sensitivity.png",
+        "loto_manifest.json",
+        "loto_support.csv",
+        "loto_d_mode_metrics.csv",
+        "loto_d_aggregate.csv",
+        "loto_d_predictions.csv",
+        "loto_binary_metrics.csv",
+        "loto_binary_predictions.csv",
+        "loto_d_comparison.png",
+        "loto_c_comparison.png",
+        "repeated_split_manifest.json",
+        "repeated_split_counts.csv",
+        "repeated_split_d_mode_metrics.csv",
+        "repeated_split_d_aggregate.csv",
+        "repeated_split_d_predictions.csv",
+        "repeated_split_binary_metrics.csv",
+        "repeated_split_binary_predictions.csv",
+        "repeated_split_summary.csv",
+        "repeated_split_d_stability.png",
+        "repeated_split_c_stability.png",
+        "system_alarm_manifest.json",
+        "system_fpr_search.csv",
+        "system_thresholds.csv",
+        "system_alarm_metrics.csv",
+        "system_alarm_cost.csv",
+        "system_alarm_calibration.png",
     ]
     for name in required:
         path = OUT / name
@@ -840,12 +1083,18 @@ def main() -> None:
     check_oracle_analysis(config)
     check_corruption_analysis(config)
     check_label_conflict_analysis(config)
+    check_alarm_cost_analysis()
+    check_loto_analysis(config)
+    check_repeated_splits(config)
+    check_system_alarm_calibration()
     check_artifacts(manifest)
     print(
         "PASS: selection, thresholds, row labels, metrics, alarms, FPR denominators, "
         "aggregates, noise repeats, bootstrap intervals, RNF sensitivity, "
         "threshold calibration, rule oracle, permutation importance, "
         "Gaussian/bias/missing corruption, label-conflict sensitivity, "
+        "per-1,000-device alarm costs, leave-one-type-out, "
+        "five-seed repeated splits, system-level alarm calibration, "
         "and artifacts verified"
     )
 
